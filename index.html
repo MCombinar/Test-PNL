@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test VAK: Estilo de Aprendizaje</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            poppins: ['Poppins', 'sans-serif'],
+          },
+          colors: {
+            primary: '#4f46e5', 
+            visual: '#34D399', 
+            auditory: '#F59E0B', 
+            kinesthetic: '#EC4899', 
+            brand: {
+              light: '#374151', 
+              DEFAULT: '#1f2937',
+              dark: '#111827', 
+            },
+            'dark-bg': '#0F172A', 
+            'dark-card': '#1E293B', 
+            'dark-border': '#334155', 
+            'dark-text-primary': '#F1F5F9', 
+            'dark-text-secondary': '#CBD5E1', 
+            'dark-text-muted': '#94A3B8', 
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-out',
+            'slide-in-up': 'slideInUp 0.5s ease-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: 0 },
+              '100%': { opacity: 1 },
+            },
+            slideInUp: {
+              '0%': { transform: 'translateY(20px)', opacity: 0 },
+              '100%': { transform: 'translateY(0)', opacity: 1 },
+            }
+          }
+        }
+      }
+    }
+  </script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "recharts": "https://esm.sh/recharts@^2.15.3",
+    "react-dom/client": "https://esm.sh/react-dom@^19.1.0/client",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+  }
+}
+</script>
+</head>
+<body class="font-poppins bg-gradient-to-br from-slate-900 via-gray-900 to-black text-dark-text-secondary min-h-screen flex items-center justify-center p-4">
+  <div id="root" class="w-full max-w-2xl"></div>
+
+  <script type="module">
+    import React, { useState, useCallback, useEffect } from 'react';
+    import ReactDOM from 'react-dom/client';
+    import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+
+    // --- Start of types.ts ---
+    var LearningStyle;
+    (function (LearningStyle) {
+        LearningStyle["Visual"] = "Visual";
+        LearningStyle["Auditory"] = "Auditory";
+        LearningStyle["Kinesthetic"] = "Kinesthetic";
+    })(LearningStyle || (LearningStyle = {}));
+    var AppScreen;
+    (function (AppScreen) {
+        AppScreen[AppScreen["Introduction"] = 0] = "Introduction";
+        AppScreen[AppScreen["Quiz"] = 1] = "Quiz";
+        AppScreen[AppScreen["Results"] = 2] = "Results";
+    })(AppScreen || (AppScreen = {}));
+    // --- End of types.ts ---
+
+    // --- Start of components/icons/EyeIcon.tsx ---
+    const EyeIcon = ({ className }) => (
+      React.createElement("svg", { 
+        xmlns: "http://www.w3.org/2000/svg", 
+        viewBox: "0 0 24 24", 
+        fill: "none", 
+        stroke: "currentColor", 
+        strokeWidth: "2", 
+        strokeLinecap: "round", 
+        strokeLinejoin: "round", 
+        className: className
+      },
+      React.createElement("path", { d: "M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" }),
+      React.createElement("circle", { cx: "12", cy: "12", r: "3" }))
+    );
+    // --- End of components/icons/EyeIcon.tsx ---
+
+    // --- Start of components/icons/EarIcon.tsx ---
+    const EarIcon = ({ className }) => (
+      React.createElement("svg", { 
+        xmlns: "http://www.w3.org/2000/svg", 
+        viewBox: "0 0 24 24", 
+        fill: "none", 
+        stroke: "currentColor", 
+        strokeWidth: "2", 
+        strokeLinecap: "round", 
+        strokeLinejoin: "round", 
+        className: className
+      },
+      React.createElement("path", { d: "M6 10a7.34 7.34 0 0 1 7-7.24 7.34 7.34 0 0 1 7 7.24V14a5 5 0 0 1-5 5H9a2 2 0 0 0-2 2v0a2 2 0 0 0 2 2h1" }),
+      React.createElement("path", { d: "M10 10a3 3 0 0 0-3 3v1" }))
+    );
+    // --- End of components/icons/EarIcon.tsx ---
+
+    // --- Start of components/icons/MotionIcon.tsx ---
+    const MotionIcon = ({ className }) => (
+      React.createElement("svg", { 
+        xmlns: "http://www.w3.org/2000/svg", 
+        viewBox: "0 0 24 24", 
+        fill: "none", 
+        stroke: "currentColor", 
+        strokeWidth: "2", 
+        strokeLinecap: "round", 
+        strokeLinejoin: "round", 
+        className: className
+      },
+      React.createElement("path", { d: "M15.5 13.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" }),
+      React.createElement("path", { d: "M4.5 10.5A1.5 1.5 0 0 1 6 9h1.5a1.5 1.5 0 0 1 1.5 1.5v1.5H7.5a1.5 1.5 0 0 1-1.5-1.5V9A1.5 1.5 0 0 1 4.5 7.5" }),
+      React.createElement("path", { d: "M16.5 19.5A1.5 1.5 0 0 0 15 18h-1.5a1.5 1.5 0 0 0-1.5 1.5v1.5h1.5a1.5 1.5 0 0 0 1.5-1.5V18a1.5 1.5 0 0 0-1.5-1.5" }),
+      React.createElement("path", { d: "M14 5a2 2 0 0 0-2-2h-1a2 2 0 0 0-2 2v1" }),
+      React.createElement("path", { d: "M10 9.5V6.5a1.5 1.5 0 0 1 3 0V17" }),
+      React.createElement("path", { d: "m7.5 10.5-2 1.5V18" }),
+      React.createElement("path", { d: "M13.5 14.5 16 13l2.5 3" }))
+    );
+    // --- End of components/icons/MotionIcon.tsx ---
+
+    // --- Start of constants/questions.ts ---
+    const ALL_QUESTIONS = [
+      { id: 1, text: "¿Cuál de las siguientes actividades disfrutas más?", options: [ { id: 'a', text: "Escuchar música o podcasts", style: LearningStyle.Auditory }, { id: 'b', text: "Ver películas o series", style: LearningStyle.Visual }, { id: 'c', text: "Bailar, hacer deporte o manualidades", style: LearningStyle.Kinesthetic } ] },
+      { id: 2, text: "Cuando ves la televisión, ¿qué tipo de programa prefieres?", options: [ { id: 'a', text: "Documentales o programas sobre descubrimientos y lugares", style: LearningStyle.Visual }, { id: 'c', text: "Noticieros o programas de debate donde se discuten temas", style: LearningStyle.Auditory }, { id: 'b', text: "Programas cómicos o de entretenimiento con mucha acción o participación del público", style: LearningStyle.Kinesthetic }, ] },
+      { id: 3, text: "Cuando conversas con otra persona, tú:", options: [ { id: 'a', text: "La escuchas atentamente, fijándote en el tono de su voz", style: LearningStyle.Auditory }, { id: 'b', text: "La observas, prestando atención a sus gestos y expresiones", style: LearningStyle.Visual }, { id: 'c', text: "Tiendes a tocarla suavemente o a gesticular mucho al hablar", style: LearningStyle.Kinesthetic } ] },
+      { id: 4, text: "Si pudieras adquirir uno de los siguientes artículos para tu tiempo libre, ¿cuál elegirías?", options: [ { id: 'c', text: "Una pantalla grande o un proyector para ver imágenes y videos", style: LearningStyle.Visual }, { id: 'b', text: "Un buen equipo de sonido para música o audiolibros", style: LearningStyle.Auditory }, { id: 'a', text: "Un espacio cómodo para moverte y experimentar (como un taller de manualidades o un equipo deportivo)", style: LearningStyle.Kinesthetic } ] },
+      { id: 5, text: "¿Qué prefieres hacer un sábado por la tarde?", options: [ { id: 'c', text: "Ir al cine a ver una película nueva", style: LearningStyle.Visual }, { id: 'b', text: "Ir a un concierto o escuchar música en vivo", style: LearningStyle.Auditory }, { id: 'a', text: "Realizar alguna actividad física, como pasear o practicar un deporte", style: LearningStyle.Kinesthetic } ] },
+      { id: 6, text: "¿Qué tipo de exámenes se te facilitan más?", options: [ { id: 'b', text: "Exámenes escritos donde puedes organizar tus ideas visualmente", style: LearningStyle.Visual }, { id: 'a', text: "Exámenes orales donde puedes explicar tus respuestas", style: LearningStyle.Auditory }, { id: 'c', text: "Exámenes prácticos o de opción múltiple donde puedes interactuar o elegir", style: LearningStyle.Kinesthetic } ] },
+      { id: 7, text: "¿Cómo te orientas más fácilmente en un lugar nuevo?", options: [ { id: 'a', text: "Mediante el uso de un mapa o viendo señales", style: LearningStyle.Visual }, { id: 'b', text: "Pidiendo indicaciones y escuchando las explicaciones", style: LearningStyle.Auditory }, { id: 'c', text: "A través de la intuición, moviéndote y explorando el lugar", style: LearningStyle.Kinesthetic } ] },
+      { id: 8, text: "En tu tiempo de descanso, prefieres:", options: [ { id: 'b', text: "Observar tu entorno, leer un libro o ver algo interesante", style: LearningStyle.Visual }, { id: 'a', text: "Escuchar música relajante, un podcast o simplemente disfrutar del silencio", style: LearningStyle.Auditory }, { id: 'c', text: "Hacer algo manual, estirarte, o encontrar una postura cómoda para relajarte", style: LearningStyle.Kinesthetic } ] },
+      { id: 9, text: "Te halaga más que te digan que:", options: [ { id: 'a', text: "Tienes buen aspecto o te vistes muy bien", style: LearningStyle.Visual }, { id: 'c', text: "Tienes una conversación interesante o una voz agradable", style: LearningStyle.Auditory }, { id: 'b', text: "Tienes un trato muy agradable o das buenos abrazos", style: LearningStyle.Kinesthetic } ] },
+      { id: 10, text: "¿Cuál de estos ambientes te atrae más?", options: [ { id: 'c', text: "Uno con una hermosa vista, lleno de colores y formas interesantes", style: LearningStyle.Visual }, { id: 'b', text: "Uno en el que se escuchen sonidos agradables, como música o la naturaleza", style: LearningStyle.Auditory }, { id: 'a', text: "Uno en el que te sientas cómodo físicamente, con texturas y temperaturas agradables", style: LearningStyle.Kinesthetic } ] },
+      { id: 11, text: "¿De qué manera se te facilita aprender algo nuevo?", options: [ { id: 'b', text: "Viendo diagramas, escribiéndolo varias veces o usando colores", style: LearningStyle.Visual }, { id: 'a', text: "Repitiéndolo en voz alta, escuchando explicaciones o debatiéndolo", style: LearningStyle.Auditory }, { id: 'c', text: "Haciéndolo, experimentándolo o relacionándolo con algo divertido o una actividad física", style: LearningStyle.Kinesthetic } ] },
+      { id: 12, text: "¿A qué evento prefieres asistir?", options: [ { id: 'b', text: "A una exposición de arte, un desfile de modas o un espectáculo visual", style: LearningStyle.Visual }, { id: 'c', text: "A una charla interesante, un taller donde se explique algo o un debate", style: LearningStyle.Auditory }, { id: 'a', text: "A una reunión social donde puedas interactuar, moverte y participar activamente", style: LearningStyle.Kinesthetic } ] },
+      { id: 13, text: "Te formas una opinión de otras personas principalmente:", options: [ { id: 'c', text: "Por su aspecto, cómo se visten o sus expresiones faciales", style: LearningStyle.Visual }, { id: 'a', text: "Por la sinceridad de su voz, cómo hablan o lo que dicen", style: LearningStyle.Auditory }, { id: 'b', text: "Por la forma de estrecharte la mano, su energía o cómo se mueven", style: LearningStyle.Kinesthetic } ] },
+      { id: 14, text: "¿Cómo te consideras?", options: [ { id: 'a', text: "Atlético/a (disfrutas el movimiento y ver acciones)", style: LearningStyle.Visual }, { id: 'b', text: "Intelectual (te gusta escuchar ideas y analizar información)", style: LearningStyle.Auditory }, { id: 'c', text: "Sociable (te gusta interactuar y sentir la conexión con otros)", style: LearningStyle.Kinesthetic }, ] },
+      { id: 15, text: "¿Qué tipo de películas te gustan más?", options: [ { id: 'b', text: "De acción o con muchos efectos visuales", style: LearningStyle.Visual }, { id: 'a', text: "Con diálogos inteligentes, buena música o historias bien contadas", style: LearningStyle.Auditory }, { id: 'c', text: "Que te hagan sentir emociones intensas o te involucren en la trama", style: LearningStyle.Kinesthetic } ] },
+      { id: 16, text: "Prefieres mantener contacto con otra persona:", options: [ { id: 'a', text: "Por videollamada o enviando fotos/videos", style: LearningStyle.Visual }, { id: 'c', text: "Por teléfono o mensajes de voz", style: LearningStyle.Auditory }, { id: 'b', text: "En persona, tomando un café o dando un paseo juntos", style: LearningStyle.Kinesthetic } ] },
+      { id: 17, text: "¿Cuál de las siguientes frases te identifica más con tu auto (o un vehículo que te guste)?", options: [ { id: 'c', text: "Es importante que mi auto esté limpio y se vea bien por fuera y por dentro", style: LearningStyle.Visual }, { id: 'b', text: "Percibo hasta el más ligero ruido que hace mi auto y me gusta cómo suena el motor", style: LearningStyle.Auditory }, { id: 'a', text: "Me gusta que mi auto se sienta bien al conducirlo, la comodidad y cómo responde", style: LearningStyle.Kinesthetic } ] },
+      { id: 18, text: "¿Cómo prefieres pasar el tiempo con tu pareja o un buen amigo/a?", options: [ { id: 'c', text: "Mirando algo juntos (una película, un paisaje) u observándose", style: LearningStyle.Visual }, { id: 'a', text: "Conversando, contándose cosas o escuchando música juntos", style: LearningStyle.Auditory }, { id: 'b', text: "Haciendo alguna actividad juntos, abrazándose o simplemente sintiendo su compañía", style: LearningStyle.Kinesthetic } ] },
+      { id: 19, text: "Si no encuentras las llaves en una bolsa o mochila:", options: [ { id: 'a', text: "La buscas mirando cuidadosamente dentro y moviendo las cosas para ver mejor", style: LearningStyle.Visual }, { id: 'b', text: "Sacudes la bolsa para oír el ruido de las llaves o preguntas si alguien las ha oído", style: LearningStyle.Auditory }, { id: 'c', text: "Buscas al tacto, metiendo la mano y palpando hasta encontrarlas", style: LearningStyle.Kinesthetic } ] },
+      { id: 20, text: "Cuando tratas de recordar algo, ¿cómo lo haces principalmente?", options: [ { id: 'a', text: "A través de imágenes mentales, visualizando la situación o la información", style: LearningStyle.Visual }, { id: 'c', text: "A través de sonidos, recordando lo que se dijo o escuchando una voz interna", style: LearningStyle.Auditory }, { id: 'b', text: "A través de emociones o sensaciones físicas, recordando cómo te sentiste", style: LearningStyle.Kinesthetic } ] },
+      { id: 21, text: "Si tuvieras una gran suma de dinero inesperada, ¿qué harías primero?", options: [ { id: 'b', text: "Viajar para ver paisajes asombrosos y explorar nuevos lugares", style: LearningStyle.Visual }, { id: 'c', text: "Crear un estudio para grabar música, podcasts o contar historias", style: LearningStyle.Auditory }, { id: 'a', text: "Construir o remodelar un espacio para vivir y disfrutar de actividades físicas", style: LearningStyle.Kinesthetic } ] },
+      { id: 22, text: "¿Qué frase te identifica más?", options: [ { id: 'c', text: "Recuerdo el aspecto de alguien, pero a veces olvido su nombre", style: LearningStyle.Visual }, { id: 'a', text: "Reconozco a las personas por su voz fácilmente", style: LearningStyle.Auditory }, { id: 'b', text: "No siempre recuerdo el aspecto de la gente, pero sí la impresión que me causaron", style: LearningStyle.Kinesthetic } ] },
+      { id: 23, text: "Si tuvieras que quedarte en una isla desierta, preferirías llevar contigo:", options: [ { id: 'a', text: "Algunos buenos libros o cuadernos para dibujar y escribir", style: LearningStyle.Visual }, { id: 'b', text: "Un radio portátil de alta frecuencia o un reproductor de música con mucha batería", style: LearningStyle.Auditory }, { id: 'c', text: "Herramientas para construir cosas, semillas para plantar o equipo deportivo", style: LearningStyle.Kinesthetic } ] },
+      { id: 24, text: "¿Cuál de estos entretenimientos prefieres?", options: [ { id: 'b', text: "Sacar fotografías o filmar videos", style: LearningStyle.Visual }, { id: 'a', text: "Tocar un instrumento musical o cantar", style: LearningStyle.Auditory }, { id: 'c', text: "Hacer actividades manuales, cocinar o jardinería", style: LearningStyle.Kinesthetic } ] },
+      { id: 25, text: "Al aprender un baile nuevo, ¿qué te ayuda más?", options: [ { id: 'a', text: "Ver al instructor hacer los movimientos y luego imitarlos", style: LearningStyle.Visual }, { id: 'b', text: "Escuchar el ritmo de la música y las instrucciones verbales paso a paso", style: LearningStyle.Auditory }, { id: 'c', text: "Sentir el movimiento en tu cuerpo y practicarlo repetidamente", style: LearningStyle.Kinesthetic } ] },
+      { id: 26, text: "Cuando armas un mueble o sigues instrucciones para un proyecto, ¿qué haces primero?", options: [ { id: 'c', text: "Miras los diagramas e imágenes detenidamente", style: LearningStyle.Visual }, { id: 'b', text: "Pides que alguien te lea las instrucciones o las lees en voz alta", style: LearningStyle.Auditory }, { id: 'a', text: "Empiezas a manipular las piezas para entender cómo encajan", style: LearningStyle.Kinesthetic } ] },
+      { id: 27, text: "¿Qué te molesta más en una biblioteca o lugar de estudio?", options: [ { id: 'b', text: "El desorden visual, luces muy brillantes o parpadeantes", style: LearningStyle.Visual }, { id: 'a', text: "Los susurros, ruidos constantes o música que no te gusta", style: LearningStyle.Auditory }, { id: 'c', text: "Una silla incómoda, la temperatura inadecuada o no poder moverte", style: LearningStyle.Kinesthetic } ] },
+      { id: 28, text: "Si te regalan algo, ¿qué aprecias más?", options: [ { id: 'c', text: "Que sea visualmente atractivo, bien envuelto o con colores bonitos", style: LearningStyle.Visual }, { id: 'b', text: "Las palabras que te dicen al dártelo o una tarjeta con un mensaje especial", style: LearningStyle.Auditory }, { id: 'a', text: "El gesto en sí, que sea algo útil que puedas usar o una experiencia para disfrutar", style: LearningStyle.Kinesthetic } ] },
+      { id: 29, text: "¿Cómo prefieres que te expliquen cómo llegar a un sitio?", options: [ { id: 'b', text: "Con un mapa o un dibujo que muestre el camino", style: LearningStyle.Visual }, { id: 'c', text: "Con instrucciones verbales claras y detalladas", style: LearningStyle.Auditory }, { id: 'a', text: "Que te acompañen la primera vez o te den referencias que puedas sentir/experimentar (ej: 'gira después del edificio rojo que se siente frío')", style: LearningStyle.Kinesthetic } ] },
+      { id: 30, text: "En una clase o presentación, ¿qué capta más tu atención?", options: [ { id: 'c', text: "Las diapositivas coloridas, videos o demostraciones visuales", style: LearningStyle.Visual }, { id: 'b', text: "El tono de voz del presentador, las historias interesantes o las discusiones", style: LearningStyle.Auditory }, { id: 'a', text: "Las actividades prácticas, poder moverte o interactuar con objetos", style: LearningStyle.Kinesthetic } ] },
+      { id: 31, text: "Cuando lees un libro, ¿qué es lo más importante para ti?", options: [ { id: 'b', text: "Las descripciones detalladas que te permiten imaginar las escenas", style: LearningStyle.Visual }, { id: 'a', text: "Los diálogos ingeniosos o la forma en que está narrada la historia (el 'sonido' de las palabras)", style: LearningStyle.Auditory }, { id: 'c', text: "La emoción que te transmite la historia o poder 'sentir' lo que viven los personajes", style: LearningStyle.Kinesthetic } ] },
+      { id: 32, text: "Si tienes que recordar un número de teléfono, ¿cómo lo haces?", options: [ { id: 'c', text: "Visualizándolo escrito o imaginando los números en un teclado", style: LearningStyle.Visual }, { id: 'a', text: "Repitiéndolo en voz alta o para tus adentros varias veces", style: LearningStyle.Auditory }, { id: 'b', text: "Marcándolo varias veces en un teléfono (real o imaginario) o asociándolo con un ritmo", style: LearningStyle.Kinesthetic } ] },
+      { id: 33, text: "¿Qué tipo de arte disfrutas más?", options: [ { id: 'a', text: "La pintura, la fotografía o el cine", style: LearningStyle.Visual }, { id: 'c', text: "La música, la poesía recitada o el teatro con buenos diálogos", style: LearningStyle.Auditory }, { id: 'b', text: "La escultura (poder tocarla), la danza o el arte interactivo", style: LearningStyle.Kinesthetic } ] },
+      { id: 34, text: "Cuando estás en un grupo, ¿cómo sueles participar?", options: [ { id: 'b', text: "Observando a los demás y el entorno antes de hablar", style: LearningStyle.Visual }, { id: 'a', text: "Escuchando atentamente y aportando tus ideas verbalmente", style: LearningStyle.Auditory }, { id: 'c', text: "Moviéndote, gesticulando o participando en actividades grupales", style: LearningStyle.Kinesthetic } ] },
+      { id: 35, text: "¿Qué te ayuda a concentrarte cuando estudias o trabajas?", options: [ { id: 'b', text: "Tener un espacio ordenado y visualmente agradable, con buena iluminación", style: LearningStyle.Visual }, { id: 'c', text: "El silencio absoluto o música instrumental suave que no distraiga", style: LearningStyle.Auditory }, { id: 'a', text: "Poder moverte, tomar descansos activos o tener algo en las manos (un bolígrafo, una pelota antiestrés)", style: LearningStyle.Kinesthetic } ] },
+      { id: 36, text: "Si aprendes un nuevo idioma, ¿qué te resulta más fácil?", options: [ { id: 'a', text: "Leer y ver palabras escritas, asociar imágenes con vocabulario", style: LearningStyle.Visual }, { id: 'c', text: "Escuchar a hablantes nativos, practicar la pronunciación y conversar", style: LearningStyle.Auditory }, { id: 'b', text: "Usar gestos, actuar escenas o aprender mediante juegos de roles", style: LearningStyle.Kinesthetic } ] },
+      { id: 37, text: "Cuando eliges ropa, ¿en qué te fijas principalmente?", options: [ { id: 'a', text: "En los colores, el diseño y cómo te ves con ella", style: LearningStyle.Visual }, { id: 'b', text: "En lo que dicen los demás sobre cómo te queda o si el tejido hace algún ruido particular (ej. seda)", style: LearningStyle.Auditory }, { id: 'c', text: "En cómo se siente la tela al tacto, la comodidad y si te permite moverte libremente", style: LearningStyle.Kinesthetic } ] },
+      { id: 38, text: "¿Qué tipo de vacaciones prefieres?", options: [ { id: 'b', text: "Un lugar con paisajes impresionantes, museos o arquitectura interesante para ver", style: LearningStyle.Visual }, { id: 'c', text: "Un lugar con mucha vida cultural, música, festivales o donde puedas aprender un idioma", style: LearningStyle.Auditory }, { id: 'a', text: "Un lugar donde puedas hacer actividades al aire libre, deportes, explorar o relajarte en la naturaleza", style: LearningStyle.Kinesthetic } ] },
+      { id: 39, text: "Al contar una historia o anécdota, ¿qué sueles enfatizar?", options: [ { id: 'b', text: "Los detalles visuales, cómo se veían las cosas o las personas", style: LearningStyle.Visual }, { id: 'c', text: "Lo que se dijo, los sonidos o el tono de voz de los involucrados", style: LearningStyle.Auditory }, { id: 'a', text: "Las acciones, tus sensaciones o cómo te moviste durante el evento", style: LearningStyle.Kinesthetic } ] },
+      { id: 40, text: "¿Qué es lo primero que notas al entrar a una habitación nueva?", options: [ { id: 'c', text: "La decoración, los colores, la luz y cómo están distribuidos los objetos", style: LearningStyle.Visual }, { id: 'a', text: "Los sonidos, la música ambiente, las conversaciones o el silencio", style: LearningStyle.Auditory }, { id: 'b', text: "La temperatura, el ambiente general (si es acogedor o no), el espacio para moverte", style: LearningStyle.Kinesthetic } ] }
+    ];
+    const QUESTIONS_PER_BLOCK = 5;
+    // --- End of constants/questions.ts ---
+
+    // --- Start of components/StyledButton.tsx ---
+    const StyledButton = ({ children, variant = 'primary', size = 'md', fullWidth = false, className = '', ...props }) => {
+      const baseStyles = 'font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-all duration-150 ease-in-out transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100';
+      const variantStyles = {
+        primary: 'bg-indigo-500 hover:bg-indigo-600 text-white focus:ring-indigo-400',
+        secondary: 'bg-slate-600 hover:bg-slate-500 text-slate-100 focus:ring-slate-400',
+        success: 'bg-emerald-500 hover:bg-emerald-600 text-white focus:ring-emerald-400',
+      };
+      const sizeStyles = {
+        sm: 'px-3 py-1.5 text-sm',
+        md: 'px-4 py-2 text-base',
+        lg: 'px-6 py-3 text-lg',
+      };
+      const widthStyles = fullWidth ? 'w-full' : '';
+      return (
+        React.createElement("button", {
+          className: `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyles} ${className}`,
+          ...props
+        }, children)
+      );
+    };
+    // --- End of components/StyledButton.tsx ---
+
+    // --- Start of components/ProgressBar.tsx ---
+    const ProgressBar = ({ current, total }) => {
+      const percentage = total > 0 ? (current / total) * 100 : 0;
+      return (
+        React.createElement("div", { className: "w-full bg-slate-700 rounded-full h-2.5 mb-6 shadow-inner" },
+          React.createElement("div", {
+            className: "bg-indigo-500 h-2.5 rounded-full transition-all duration-500 ease-out",
+            style: { width: `${percentage}%` }
+          }))
+      );
+    };
+    // --- End of components/ProgressBar.tsx ---
+
+    // --- Start of components/QuestionDisplay.tsx ---
+    const QuestionDisplay = ({ question, onAnswer, selectedOption }) => {
+      return (
+        React.createElement("div", { className: "mb-8 p-6 bg-dark-card rounded-lg shadow-lg animate-slide-in-up" },
+          React.createElement("h2", { className: "text-xl font-semibold text-dark-text-primary mb-6" },
+            React.createElement("span", { className: "text-indigo-400 font-bold mr-2" }, `${question.id}.`),
+            question.text
+          ),
+          React.createElement("div", { className: "space-y-3" },
+            question.options.map((option) => (
+              React.createElement("button", {
+                key: option.id,
+                onClick: () => onAnswer(question.id, option.style),
+                className: `
+                  w-full text-left p-4 rounded-md border-2 
+                  transition-all duration-200 ease-in-out
+                  hover:shadow-md
+                  focus:outline-none focus:ring-2 focus:ring-opacity-50
+                  ${selectedOption === option.style 
+                    ? 'bg-indigo-600 border-indigo-500 ring-2 ring-indigo-500 text-white font-semibold' 
+                    : 'bg-slate-700 hover:bg-indigo-700 hover:border-indigo-500 border-dark-border text-dark-text-secondary hover:text-dark-text-primary'}
+                `
+              },
+              React.createElement("span", { className: "font-medium mr-2" }, `${option.id.toUpperCase()})`), ` ${option.text}`)
+            ))
+          )
+        )
+      );
+    };
+    // --- End of components/QuestionDisplay.tsx ---
+
+    // --- Start of components/IntroductionScreen.tsx ---
+    const IntroductionScreen = ({ onStartQuiz }) => {
+      return (
+        React.createElement("div", { className: "bg-dark-card p-6 sm:p-8 rounded-xl shadow-2xl animate-fade-in text-center" },
+          React.createElement("div", { className: "flex justify-center items-center space-x-4 mb-6" },
+            React.createElement(EyeIcon, { className: "w-10 h-10 text-visual" }),
+            React.createElement(EarIcon, { className: "w-10 h-10 text-auditory" }),
+            React.createElement(MotionIcon, { className: "w-10 h-10 text-kinesthetic" })
+          ),
+          React.createElement("h1", { className: "text-3xl sm:text-4xl font-bold text-dark-text-primary mb-4" },
+            "Test VAK: Descubre tu Estilo de Aprendizaje"
+          ),
+          React.createElement("p", { className: "text-dark-text-secondary mb-3 text-sm sm:text-base" },
+            "¡Bienvenido/a! Este test te ayudará a conocer más sobre tu tipo de percepción dominante (Visual, Auditivo o Kinestésico) al momento de capturar y procesar información."
+          ),
+          React.createElement("p", { className: "text-dark-text-secondary mb-6 text-sm sm:text-base" },
+            "El aprendizaje es un proceso activo y dinámico. Conocer tu estilo propio puede facilitar y potenciar tu aprendizaje."
+          ),
+          React.createElement("h2", { className: "text-xl font-semibold text-dark-text-primary mb-3" }, "Instrucciones"),
+          React.createElement("p", { className: "text-dark-text-secondary mb-6 text-sm sm:text-base" },
+            "Responde a las siguientes preguntas seleccionando la opción que mejor se adapte a tus preferencias. No hay respuestas correctas o incorrectas, ¡simplemente sé tú mismo/a!"
+          ),
+          React.createElement(StyledButton, { onClick: onStartQuiz, size: "lg", fullWidth: true },
+            "Comenzar Test"
+          )
+        )
+      );
+    };
+    // --- End of components/IntroductionScreen.tsx ---
+
+    // --- Start of components/QuizScreen.tsx ---
+    const QuizScreen = ({ onQuizComplete }) => {
+      const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
+      const [answers, setAnswers] = useState([]);
+      const totalBlocks = Math.ceil(ALL_QUESTIONS.length / QUESTIONS_PER_BLOCK);
+      const questionsInCurrentBlock = ALL_QUESTIONS.slice(
+        currentBlockIndex * QUESTIONS_PER_BLOCK,
+        (currentBlockIndex + 1) * QUESTIONS_PER_BLOCK
+      );
+      const handleAnswer = (questionId, style) => {
+        setAnswers((prevAnswers) => {
+          const existingAnswerIndex = prevAnswers.findIndex(a => a.questionId === questionId);
+          if (existingAnswerIndex > -1) {
+            const updatedAnswers = [...prevAnswers];
+            updatedAnswers[existingAnswerIndex] = { questionId, style };
+            return updatedAnswers;
+          }
+          return [...prevAnswers, { questionId, style }];
+        });
+      };
+      const getSelectedOptionForQuestion = (questionId) => {
+        const answer = answers.find(a => a.questionId === questionId);
+        return answer ? answer.style : null;
+      };
+      const handleNextBlock = () => {
+        if (currentBlockIndex < totalBlocks - 1) {
+          setCurrentBlockIndex(currentBlockIndex + 1);
+        } else {
+          onQuizComplete(answers);
+        }
+      };
+      const handlePreviousBlock = () => {
+        if (currentBlockIndex > 0) {
+          setCurrentBlockIndex(currentBlockIndex - 1);
+        }
+      };
+      const isCurrentBlockAnswered = () => {
+        return questionsInCurrentBlock.every(q => answers.some(a => a.questionId === q.id));
+      };
+      useEffect(() => {
+        window.scrollTo(0, 0);
+      }, [currentBlockIndex]);
+      return (
+        React.createElement("div", { className: "bg-dark-card p-6 sm:p-8 rounded-xl shadow-2xl animate-fade-in w-full" },
+          React.createElement("h1", { className: "text-2xl sm:text-3xl font-bold text-dark-text-primary mb-2 text-center" },
+            "Cuestionario VAK"
+          ),
+          React.createElement("p", { className: "text-center text-dark-text-muted mb-6" },
+            `Bloque ${currentBlockIndex + 1} de ${totalBlocks}`
+          ),
+          React.createElement(ProgressBar, { current: currentBlockIndex * QUESTIONS_PER_BLOCK + questionsInCurrentBlock.filter(q => answers.some(a => a.questionId === q.id)).length, total: ALL_QUESTIONS.length }),
+          questionsInCurrentBlock.map((question) => (
+            React.createElement(QuestionDisplay, {
+              key: question.id,
+              question: question,
+              onAnswer: handleAnswer,
+              selectedOption: getSelectedOptionForQuestion(question.id)
+            })
+          )),
+          React.createElement("div", { className: "mt-8 flex flex-col sm:flex-row justify-between space-y-3 sm:space-y-0 sm:space-x-4" },
+            React.createElement(StyledButton, {
+              onClick: handlePreviousBlock,
+              disabled: currentBlockIndex === 0,
+              variant: "secondary",
+              className: currentBlockIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
+            }, "Anterior"),
+            React.createElement(StyledButton, {
+              onClick: handleNextBlock,
+              disabled: !isCurrentBlockAnswered(),
+              variant: currentBlockIndex === totalBlocks - 1 ? 'success' : 'primary',
+              className: !isCurrentBlockAnswered() ? 'opacity-50 cursor-not-allowed' : ''
+            }, currentBlockIndex === totalBlocks - 1 ? 'Finalizar y Ver Resultados' : 'Siguiente')
+          )
+        )
+      );
+    };
+    // --- End of components/QuizScreen.tsx ---
+
+    // --- Start of components/ResultsScreen.tsx ---
+    const LEARNING_STYLE_INFO = {
+      [LearningStyle.Visual]: { title: "Visual", description: "Aprendes principalmente mediante imágenes. Te fijas en las características que puedes ver e imaginar. Sueles recordar mejor la información si la ves escrita, en diagramas o gráficos. Los colores, las formas y la organización espacial son importantes para ti.", tips: [ "Utiliza mapas mentales y esquemas.", "Subraya y usa colores en tus apuntes.", "Visualiza la información en tu mente.", "Busca videos y demostraciones visuales." ], color: "text-visual", icon: EyeIcon, chartColor: "#34D399" },
+      [LearningStyle.Auditory]: { title: "Auditivo", description: "Aprendes principalmente mediante sonidos. Recuerdas mejor lo que oyes y lo que dices. Las explicaciones orales, los debates y la música te ayudan a aprender. El tono de voz y las palabras clave son importantes para ti.", tips: [ "Lee en voz alta tus apuntes.", "Graba las clases o explicaciones y escúchalas.", "Participa en debates y discusiones.", "Estudia con música (si te ayuda a concentrarte)." ], color: "text-auditory", icon: EarIcon, chartColor: "#F59E0B" },
+      [LearningStyle.Kinesthetic]: { title: "Kinestésico", description: "Aprendes principalmente mediante el movimiento, el tacto y la experiencia directa. Necesitas involucrarte físicamente en las actividades para comprender y recordar. Las sensaciones y emociones son clave en tu aprendizaje.", tips: [ "Aprende haciendo: realiza experimentos y proyectos.", "Utiliza material manipulable.", "Toma descansos activos y muévete mientras estudias.", "Relaciona el aprendizaje con experiencias reales." ], color: "text-kinesthetic", icon: MotionIcon, chartColor: "#EC4899" },
+    };
+    const ResultsScreen = ({ results, onRestartQuiz }) => {
+      const totalAnswers = results.visual + results.auditory + results.kinesthetic;
+      const data = [
+        { name: 'Visual', porcentaje: totalAnswers > 0 ? parseFloat(((results.visual / totalAnswers) * 100).toFixed(1)) : 0, fill: LEARNING_STYLE_INFO.Visual.chartColor },
+        { name: 'Auditivo', porcentaje: totalAnswers > 0 ? parseFloat(((results.auditory / totalAnswers) * 100).toFixed(1)) : 0, fill: LEARNING_STYLE_INFO.Auditory.chartColor },
+        { name: 'Kinestésico', porcentaje: totalAnswers > 0 ? parseFloat(((results.kinesthetic / totalAnswers) * 100).toFixed(1)) : 0, fill: LEARNING_STYLE_INFO.Kinesthetic.chartColor },
+      ];
+      const sortedResults = data.sort((a, b) => b.porcentaje - a.porcentaje);
+      const dominantStyleKey = sortedResults[0].name === 'Visual' ? LearningStyle.Visual : sortedResults[0].name === 'Auditivo' ? LearningStyle.Auditory : LearningStyle.Kinesthetic;
+      const dominantStyleInfo = LEARNING_STYLE_INFO[dominantStyleKey];
+      return (
+        React.createElement("div", { className: "bg-dark-card p-6 sm:p-8 rounded-xl shadow-2xl animate-fade-in" },
+          React.createElement("h1", { className: "text-3xl sm:text-4xl font-bold text-dark-text-primary mb-6 text-center" }, "Tus Resultados VAK"),
+          React.createElement("div", { className: "mb-8 h-64 sm:h-80 w-full" },
+            React.createElement(ResponsiveContainer, { width: "100%", height: "100%" },
+              React.createElement(BarChart, { data: data, margin: { top: 5, right: 0, left: -25, bottom: 5 } },
+                React.createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#334155" }),
+                React.createElement(XAxis, { dataKey: "name", tick: { fill: '#94A3B8', fontSize: 12 } }),
+                React.createElement(YAxis, { unit: "%", tick: { fill: '#94A3B8', fontSize: 12 }, domain: [0, 100] }),
+                React.createElement(Tooltip, {
+                  formatter: (value) => `${value}%`,
+                  cursor: {fill: 'rgba(71, 85, 105, 0.4)'},
+                  contentStyle: { backgroundColor: '#1E293B', borderRadius: '0.5rem', borderColor: '#334155', color: '#F1F5F9' }
+                }),
+                React.createElement(Legend, { wrapperStyle: { fontSize: '14px', paddingTop: '10px', color: '#CBD5E1' } }),
+                React.createElement(Bar, { dataKey: "porcentaje", barSize: 40 },
+                  data.map((entry, index) => (
+                    React.createElement(Cell, { key: `cell-${index}`, fill: entry.fill })
+                  ))
+                )
+              )
+            )
+          ),
+          React.createElement("div", { className: "mb-8 text-center" },
+            React.createElement("h2", { className: `text-2xl font-semibold ${dominantStyleInfo.color} mb-2` },
+              `Tu estilo predominante es ${dominantStyleInfo.title}`
+            ),
+            React.createElement("p", { className: "text-dark-text-secondary" },
+              "Esto sugiere una preferencia por aprender a través de este canal, ¡pero recuerda que todos usamos una combinación de estilos!"
+            )
+          ),
+          React.createElement("div", { className: "space-y-6 mb-8" },
+            (Object.keys(LEARNING_STYLE_INFO)).map((styleKey) => {
+              const info = LEARNING_STYLE_INFO[styleKey];
+              const Icon = info.icon;
+              const percentage = data.find(d => d.name === info.title)?.porcentaje || 0;
+              return (
+                React.createElement("div", { key: styleKey, className: "p-4 border border-dark-border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-slate-700/30" },
+                  React.createElement("div", { className: "flex items-center mb-3" },
+                    React.createElement(Icon, { className: `w-8 h-8 mr-3 ${info.color}` }),
+                    React.createElement("h3", { className: `text-xl font-semibold ${info.color}` }, `${info.title} (${percentage}%)`)
+                  ),
+                  React.createElement("p", { className: "text-dark-text-secondary text-sm mb-2" }, info.description),
+                  React.createElement("p", { className: "text-dark-text-primary font-medium text-sm mb-1" }, "Consejos para potenciar tu aprendizaje:"),
+                  React.createElement("ul", { className: "list-disc list-inside text-dark-text-secondary text-sm space-y-1" },
+                    info.tips.map((tip, index) => React.createElement("li", { key: index }, tip))
+                  )
+                )
+              );
+            })
+          ),
+          React.createElement("div", { className: "text-center space-y-4" },
+            React.createElement("p", { className: "text-dark-text-secondary text-sm" },
+              "¡Esperamos que este test te haya sido útil! Conocer tu estilo de aprendizaje es el primer paso para estudiar de forma más efectiva y disfrutar más del proceso."
+            ),
+            React.createElement(StyledButton, { onClick: onRestartQuiz, size: "lg", variant: "primary", fullWidth: true },
+              "Volver a Comenzar el Test"
+            ),
+            React.createElement(StyledButton, { 
+                onClick: () => alert("¡Comparte tus resultados con amigos!\nPuedes tomar una captura de pantalla o contarles sobre tu estilo de aprendizaje VAK."),
+                variant: "secondary",
+                size: "md",
+                fullWidth: true
+              },
+              "Compartir Resultados (simulado)"
+            )
+          )
+        )
+      );
+    };
+    // --- End of components/ResultsScreen.tsx ---
+
+    // --- Start of App.tsx ---
+    const App = () => {
+      const [currentScreen, setCurrentScreen] = useState(AppScreen.Introduction);
+      const [quizResults, setQuizResults] = useState(null);
+      const handleStartQuiz = useCallback(() => {
+        setCurrentScreen(AppScreen.Quiz);
+        setQuizResults(null);
+      }, []);
+      const handleQuizComplete = useCallback((answers) => {
+        if (answers.length < ALL_QUESTIONS.length) {
+            alert("Por favor completa todas las preguntas antes de ver los resultados.");
+            return;
+        }
+        const results = {
+          visual: 0,
+          auditory: 0,
+          kinesthetic: 0,
+        };
+        answers.forEach(answer => {
+          if (answer.style === LearningStyle.Visual) results.visual++;
+          else if (answer.style === LearningStyle.Auditory) results.auditory++;
+          else if (answer.style === LearningStyle.Kinesthetic) results.kinesthetic++;
+        });
+        setQuizResults(results);
+        setCurrentScreen(AppScreen.Results);
+      }, []);
+      const handleRestartQuiz = useCallback(() => {
+        setCurrentScreen(AppScreen.Introduction);
+        setQuizResults(null);
+      }, []);
+      const renderScreen = () => {
+        switch (currentScreen) {
+          case AppScreen.Introduction:
+            return React.createElement(IntroductionScreen, { onStartQuiz: handleStartQuiz });
+          case AppScreen.Quiz:
+            return React.createElement(QuizScreen, { onQuizComplete: handleQuizComplete });
+          case AppScreen.Results:
+            return quizResults ? React.createElement(ResultsScreen, { results: quizResults, onRestartQuiz: handleRestartQuiz }) : React.createElement(IntroductionScreen, { onStartQuiz: handleStartQuiz });
+          default:
+            return React.createElement(IntroductionScreen, { onStartQuiz: handleStartQuiz });
+        }
+      };
+      return (
+        React.createElement("div", { className: "container mx-auto py-8" },
+          renderScreen(),
+          React.createElement("footer", { className: "text-center text-xs text-dark-text-muted mt-10" },
+            React.createElement("p", null, "Test VAK Interactivo. Basado en el modelo de Programación Neurolingüística."),
+            React.createElement("p", null, "Material Psicoeducativo para fines didácticos y de aprendizaje.")
+          )
+        )
+      );
+    };
+    // --- End of App.tsx ---
+
+    // --- Start of index.tsx (ReactDOM rendering part) ---
+    const rootElement = document.getElementById('root');
+    if (!rootElement) {
+      throw new Error("Could not find root element to mount to");
+    }
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+      React.createElement(React.StrictMode, null, React.createElement(App, null))
+    );
+    // --- End of index.tsx ---
+  </script>
+</body>
+</html>
