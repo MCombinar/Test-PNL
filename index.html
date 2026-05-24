@@ -1,520 +1,1698 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Test VAK: Estilo de Aprendizaje</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            poppins: ['Poppins', 'sans-serif'],
-          },
-          colors: {
-            primary: '#4f46e5', 
-            visual: '#34D399', 
-            auditory: '#F59E0B', 
-            kinesthetic: '#EC4899', 
-            brand: {
-              light: '#374151', 
-              DEFAULT: '#1f2937',
-              dark: '#111827', 
-            },
-            'dark-bg': '#0F172A', 
-            'dark-card': '#1E293B', 
-            'dark-border': '#334155', 
-            'dark-text-primary': '#F1F5F9', 
-            'dark-text-secondary': '#CBD5E1', 
-            'dark-text-muted': '#94A3B8', 
-          },
-          animation: {
-            'fade-in': 'fadeIn 0.5s ease-out',
-            'slide-in-up': 'slideInUp 0.5s ease-out',
-          },
-          keyframes: {
-            fadeIn: {
-              '0%': { opacity: 0 },
-              '100%': { opacity: 1 },
-            },
-            slideInUp: {
-              '0%': { transform: 'translateY(20px)', opacity: 0 },
-              '100%': { transform: 'translateY(0)', opacity: 1 },
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENCIP — Instituto Universitario | Navegando hacia tu Futuro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        encip: {
+                            deep: '#061A3D',
+                            navy: '#0A2A66',
+                            royal: '#1A5FAD',
+                            sky: '#3B82F6',
+                            light: '#93C5FD',
+                            pale: '#DBEAFE',
+                            gold: '#C9A227',
+                            goldLight: '#E8D179',
+                            goldDark: '#A68820',
+                            cream: '#F5F3EE',
+                            warm: '#FAFAF8',
+                            accent: '#FF6B35'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+                        display: ['Space Grotesk', 'Inter', 'sans-serif']
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  </script>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.1.0",
-    "react/": "https://esm.sh/react@^19.1.0/",
-    "recharts": "https://esm.sh/recharts@^2.15.3",
-    "react-dom/client": "https://esm.sh/react-dom@^19.1.0/client",
-    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
-  }
-}
-</script>
+    </script>
+    <style>
+        :root {
+            --encip-deep: #061A3D;
+            --encip-navy: #0A2A66;
+            --encip-royal: #1A5FAD;
+            --encip-gold: #C9A227;
+            --encip-gold-light: #E8D179;
+            --encip-accent: #FF6B35;
+        }
+
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #F5F3EE;
+            overflow-x: hidden;
+            color: #061A3D;
+        }
+
+        /* === LIVE CLOCK WIDGET === */
+        .live-clock {
+            font-family: 'Space Grotesk', monospace;
+            letter-spacing: 0.05em;
+        }
+
+        .live-clock .colon {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* === PARTICLE CANVAS === */
+        #particle-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* === GLASSMORPHISM PREMIUM === */
+        .glass {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(32px) saturate(160%);
+            -webkit-backdrop-filter: blur(32px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 40px rgba(6, 26, 61, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .glass-dark {
+            background: rgba(6, 26, 61, 0.82);
+            backdrop-filter: blur(32px) saturate(160%);
+            -webkit-backdrop-filter: blur(32px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 40px rgba(6, 26, 61, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(24px) saturate(140%);
+            -webkit-backdrop-filter: blur(24px) saturate(140%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 30px rgba(6, 26, 61, 0.05), 0 1px 3px rgba(6, 26, 61, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 24px 70px rgba(6, 26, 61, 0.12), 0 6px 16px rgba(6, 26, 61, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            border-color: rgba(201, 162, 39, 0.4);
+        }
+
+        /* === NEOMORPHISM === */
+        .neumorph {
+            background: linear-gradient(145deg, #ffffff, #ebe8e2);
+            box-shadow: 10px 10px 30px rgba(6, 26, 61, 0.06), -10px -10px 30px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            border-radius: 28px;
+        }
+
+        .neumorph-inset {
+            background: linear-gradient(145deg, #ebe8e2, #ffffff);
+            box-shadow: inset 5px 5px 15px rgba(6, 26, 61, 0.04), inset -5px -5px 15px rgba(255, 255, 255, 0.9);
+        }
+
+        /* === GRADIENTS === */
+        .gradient-hero {
+            background: 
+                radial-gradient(ellipse at 15% 40%, rgba(26, 95, 173, 0.12) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 15%, rgba(201, 162, 39, 0.06) 0%, transparent 45%),
+                radial-gradient(ellipse at 50% 85%, rgba(6, 26, 61, 0.06) 0%, transparent 50%),
+                linear-gradient(180deg, #F5F3EE 0%, #FFFFFF 40%, #F8F6F0 100%);
+        }
+
+        .gradient-deep {
+            background: 
+                radial-gradient(ellipse at 25% 15%, rgba(26, 95, 173, 0.25) 0%, transparent 55%),
+                radial-gradient(ellipse at 75% 85%, rgba(201, 162, 39, 0.12) 0%, transparent 45%),
+                linear-gradient(180deg, #061A3D 0%, #0A2A66 40%, #061A3D 100%);
+        }
+
+        .gradient-gold-shine {
+            background: linear-gradient(135deg, #C9A227 0%, #E8D179 30%, #C9A227 60%, #A68820 85%, #C9A227 100%);
+            background-size: 250% 250%;
+            animation: goldShine 5s ease infinite;
+        }
+
+        @keyframes goldShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-24px) rotate(0.5deg); }
+            66% { transform: translateY(-12px) rotate(-0.5deg); }
+        }
+
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-30px); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 25px rgba(201, 162, 39, 0.25), 0 0 50px rgba(201, 162, 39, 0.1); }
+            50% { box-shadow: 0 0 35px rgba(201, 162, 39, 0.45), 0 0 70px rgba(201, 162, 39, 0.2); }
+        }
+
+        @keyframes compass-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -300% 0; }
+            100% { background-position: 300% 0; }
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(60px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-float { animation: float 7s ease-in-out infinite; }
+        .animate-float-delay { animation: float 8s ease-in-out infinite 1.5s; }
+        .animate-float-delay-2 { animation: float 9s ease-in-out infinite 3s; }
+        .animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
+        .animate-breathe { animation: breathe 4s ease-in-out infinite; }
+        .animate-shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            background-size: 300% 100%;
+            animation: shimmer 3s infinite;
+        }
+        .animate-rotate-slow { animation: rotate-slow 20s linear infinite; }
+
+        /* === COMPASS SVG === */
+        .compass-svg {
+            filter: drop-shadow(0 0 40px rgba(201, 162, 39, 0.25));
+        }
+
+        .compass-ring {
+            transform-origin: center;
+            transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .compass-needle {
+            transform-origin: center;
+            transition: transform 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .compass-point {
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .compass-point:hover {
+            filter: drop-shadow(0 0 20px rgba(201, 162, 39, 0.9));
+        }
+
+        .compass-point.active {
+            filter: drop-shadow(0 0 30px rgba(201, 162, 39, 1));
+        }
+
+        /* === NAVIGATION === */
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #C9A227, transparent);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* === BUTTONS === */
+        .btn-primary {
+            background: linear-gradient(135deg, #061A3D 0%, #0A2A66 40%, #1A5FAD 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 50px rgba(6, 26, 61, 0.35);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #C9A227 0%, #E8D179 40%, #C9A227 100%);
+            color: #061A3D;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 50px rgba(201, 162, 39, 0.45);
+        }
+
+        /* === TIMELINE === */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #C9A227, #061A3D, #C9A227);
+            transform: translateX(-50%);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #C9A227;
+            border: 4px solid white;
+            box-shadow: 0 0 25px rgba(201, 162, 39, 0.6);
+            z-index: 10;
+        }
+
+        /* === MAP CARDS === */
+        .map-card {
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+        }
+
+        .map-card.active {
+            border-color: #C9A227;
+            box-shadow: 0 0 50px rgba(201, 162, 39, 0.25), 0 10px 40px rgba(6, 26, 61, 0.1);
+        }
+
+        .map-card:hover {
+            transform: translateY(-6px);
+        }
+
+        /* === CO-AGENCY LINES === */
+        .connection-line {
+            stroke: url(#goldGradient);
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 10 5;
+            animation: dashMove 3s linear infinite;
+        }
+
+        @keyframes dashMove {
+            to { stroke-dashoffset: -30; }
+        }
+
+        /* === SCROLLBAR === */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F5F3EE;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #061A3D, #1A5FAD);
+            border-radius: 3px;
+        }
+
+        /* === PROGRESS INDICATOR === */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #C9A227, #E8D179, #C9A227);
+            z-index: 9999;
+            transition: width 0.1s linear;
+        }
+
+        /* === TEXT GRADIENT === */
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #C9A227, #E8D179, #C9A227);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-gradient-blue {
+            background: linear-gradient(135deg, #061A3D, #1A5FAD, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* === REVEAL CLASSES === */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-80px);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(80px);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.85);
+        }
+
+        /* === RESPONSIVE TIMELINE === */
+        @media (max-width: 768px) {
+            .timeline-line { left: 20px; }
+            .timeline-dot { left: 20px; }
+        }
+
+        /* === SECTION DIVIDER === */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.4), transparent);
+            margin: 0 auto;
+            max-width: 300px;
+        }
+
+        /* === CUSTOM CURSOR AREA === */
+        .cursor-glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(201, 162, 39, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.4s ease;
+        }
+
+        /* === LOADING SCREEN === */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: #061A3D;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-compass {
+            width: 100px;
+            height: 100px;
+            animation: compass-rotate 3s linear infinite;
+        }
+
+        .loading-bar {
+            width: 240px;
+            height: 2px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            margin-top: 32px;
+            overflow: hidden;
+        }
+
+        .loading-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #C9A227, #E8D179);
+            border-radius: 2px;
+            animation: loadingFill 2.5s ease-in-out infinite;
+        }
+
+        @keyframes loadingFill {
+            0% { width: 0%; transform: translateX(-100%); }
+            50% { width: 100%; transform: translateX(0%); }
+            100% { width: 100%; transform: translateX(100%); }
+        }
+
+        /* === ORBITAL RING === */
+        .orbital-ring {
+            position: absolute;
+            border: 1px solid rgba(201, 162, 39, 0.15);
+            border-radius: 50%;
+            animation: rotate-slow 30s linear infinite;
+        }
+
+        .orbital-ring-reverse {
+            animation-direction: reverse;
+            animation-duration: 25s;
+        }
+
+        /* === MESH GRADIENT === */
+        .mesh-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(at 40% 20%, rgba(26, 95, 173, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, rgba(201, 162, 39, 0.08) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, rgba(6, 26, 61, 0.1) 0px, transparent 50%),
+                radial-gradient(at 80% 50%, rgba(26, 95, 173, 0.08) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(201, 162, 39, 0.06) 0px, transparent 50%);
+        }
+
+        /* === MARQUEE === */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* === STAT CARD === */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(201, 162, 39, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        /* === HOVER LIFT === */
+        .hover-lift {
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(6, 26, 61, 0.15);
+        }
+
+        /* === DATE BADGE === */
+        .date-badge {
+            background: linear-gradient(135deg, rgba(6, 26, 61, 0.9), rgba(10, 42, 102, 0.9));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(201, 162, 39, 0.2);
+        }
+
+        /* === NOISE TEXTURE === */
+        .noise {
+            position: relative;
+        }
+
+        .noise::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            opacity: 0.4;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+    </style>
+<base target="_blank">
 </head>
-<body class="font-poppins bg-gradient-to-br from-slate-900 via-gray-900 to-black text-dark-text-secondary min-h-screen flex items-center justify-center p-4">
-  <div id="root" class="w-full max-w-2xl"></div>
+<body class="antialiased">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <svg class="loading-compass" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" stroke="rgba(201,162,39,0.3)" stroke-width="2"/>
+            <circle cx="50" cy="50" r="38" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+            <circle cx="50" cy="50" r="30" stroke="rgba(201,162,39,0.15)" stroke-width="1" stroke-dasharray="3 6"/>
+            <path d="M50 12 L56 50 L50 88 L44 50 Z" fill="#C9A227" opacity="0.85"/>
+            <path d="M50 12 L53 50 L50 88 L47 50 Z" fill="#E8D179" opacity="0.5"/>
+            <circle cx="50" cy="50" r="8" fill="white" stroke="#C9A227" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="4" fill="#C9A227"/>
+        </svg>
+        <p class="text-white/50 text-sm mt-6 tracking-[0.3em] uppercase font-light">Cargando experiencia</p>
+        <div class="loading-bar">
+            <div class="loading-bar-fill"></div>
+        </div>
+    </div>
 
-  <script type="module">
-    import React, { useState, useCallback, useEffect } from 'react';
-    import ReactDOM from 'react-dom/client';
-    import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
 
-    // --- Start of types.ts ---
-    var LearningStyle;
-    (function (LearningStyle) {
-        LearningStyle["Visual"] = "Visual";
-        LearningStyle["Auditory"] = "Auditory";
-        LearningStyle["Kinesthetic"] = "Kinesthetic";
-    })(LearningStyle || (LearningStyle = {}));
-    var AppScreen;
-    (function (AppScreen) {
-        AppScreen[AppScreen["Introduction"] = 0] = "Introduction";
-        AppScreen[AppScreen["Quiz"] = 1] = "Quiz";
-        AppScreen[AppScreen["Results"] = 2] = "Results";
-    })(AppScreen || (AppScreen = {}));
-    // --- End of types.ts ---
+    <!-- Cursor Glow -->
+    <div class="cursor-glow" id="cursorGlow"></div>
 
-    // --- Start of components/icons/EyeIcon.tsx ---
-    const EyeIcon = ({ className }) => (
-      React.createElement("svg", { 
-        xmlns: "http://www.w3.org/2000/svg", 
-        viewBox: "0 0 24 24", 
-        fill: "none", 
-        stroke: "currentColor", 
-        strokeWidth: "2", 
-        strokeLinecap: "round", 
-        strokeLinejoin: "round", 
-        className: className
-      },
-      React.createElement("path", { d: "M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" }),
-      React.createElement("circle", { cx: "12", cy: "12", r: "3" }))
-    );
-    // --- End of components/icons/EyeIcon.tsx ---
+    <!-- Particle Canvas -->
+    <canvas id="particle-canvas"></canvas>
 
-    // --- Start of components/icons/EarIcon.tsx ---
-    const EarIcon = ({ className }) => (
-      React.createElement("svg", { 
-        xmlns: "http://www.w3.org/2000/svg", 
-        viewBox: "0 0 24 24", 
-        fill: "none", 
-        stroke: "currentColor", 
-        strokeWidth: "2", 
-        strokeLinecap: "round", 
-        strokeLinejoin: "round", 
-        className: className
-      },
-      React.createElement("path", { d: "M6 10a7.34 7.34 0 0 1 7-7.24 7.34 7.34 0 0 1 7 7.24V14a5 5 0 0 1-5 5H9a2 2 0 0 0-2 2v0a2 2 0 0 0 2 2h1" }),
-      React.createElement("path", { d: "M10 10a3 3 0 0 0-3 3v1" }))
-    );
-    // --- End of components/icons/EarIcon.tsx ---
+    <!-- ==================== LIVE DATE/TIME BAR ==================== -->
+    <div class="fixed top-0 left-0 right-0 z-[60] date-badge py-2 px-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-encip-gold animate-pulse"></span>
+                <span class="text-[10px] text-encip-gold/80 uppercase tracking-[0.2em] font-medium">ENCIP Live</span>
+            </div>
+            <div class="live-clock text-xs text-white/70 font-mono flex items-center gap-2">
+                <span id="liveDate"></span>
+                <span class="text-encip-gold/50">|</span>
+                <span id="liveTime" class="text-white/90"></span>
+            </div>
+        </div>
+    </div>
 
-    // --- Start of components/icons/MotionIcon.tsx ---
-    const MotionIcon = ({ className }) => (
-      React.createElement("svg", { 
-        xmlns: "http://www.w3.org/2000/svg", 
-        viewBox: "0 0 24 24", 
-        fill: "none", 
-        stroke: "currentColor", 
-        strokeWidth: "2", 
-        strokeLinecap: "round", 
-        strokeLinejoin: "round", 
-        className: className
-      },
-      React.createElement("path", { d: "M15.5 13.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" }),
-      React.createElement("path", { d: "M4.5 10.5A1.5 1.5 0 0 1 6 9h1.5a1.5 1.5 0 0 1 1.5 1.5v1.5H7.5a1.5 1.5 0 0 1-1.5-1.5V9A1.5 1.5 0 0 1 4.5 7.5" }),
-      React.createElement("path", { d: "M16.5 19.5A1.5 1.5 0 0 0 15 18h-1.5a1.5 1.5 0 0 0-1.5 1.5v1.5h1.5a1.5 1.5 0 0 0 1.5-1.5V18a1.5 1.5 0 0 0-1.5-1.5" }),
-      React.createElement("path", { d: "M14 5a2 2 0 0 0-2-2h-1a2 2 0 0 0-2 2v1" }),
-      React.createElement("path", { d: "M10 9.5V6.5a1.5 1.5 0 0 1 3 0V17" }),
-      React.createElement("path", { d: "m7.5 10.5-2 1.5V18" }),
-      React.createElement("path", { d: "M13.5 14.5 16 13l2.5 3" }))
-    );
-    // --- End of components/icons/MotionIcon.tsx ---
+    <!-- Navigation -->
+    <nav id="mainNav" class="fixed top-8 left-0 right-0 z-50 transition-all duration-700">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="#hero" class="flex items-center gap-3 group">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-encip-deep to-encip-royal flex items-center justify-center shadow-lg group-hover:shadow-encip-gold/30 transition-all duration-500">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" fill="#C9A227"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold text-encip-deep leading-tight tracking-tight font-display">ENCIP</span>
+                        <span class="text-[9px] text-encip-royal/50 uppercase tracking-[0.2em] font-medium">Instituto Universitario</span>
+                    </div>
+                </a>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#mapa" class="nav-link text-sm font-medium text-encip-deep/70 hover:text-encip-deep transition-colors">Mi Mapa</a>
+                    <a href="#brujula" class="nav-link text-sm font-medium text-encip-deep/70 hover:text-encip-deep transition-colors">Brújula OCDE</a>
+                    <a href="#coagencia" class="nav-link text-sm font-medium text-encip-deep/70 hover:text-encip-deep transition-colors">Co-Agencia</a>
+                    <a href="#timeline" class="nav-link text-sm font-medium text-encip-deep/70 hover:text-encip-deep transition-colors">Trayectoria</a>
+                    <a href="#contacto" class="btn-gold px-6 py-2.5 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl">Inscribirme</a>
+                </div>
+                <button id="mobileMenuBtn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-encip-deep/5">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-encip-deep">
+                        <path d="M3 12h18M3 6h18M3 18h18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobileMenu" class="md:hidden hidden bg-white/95 backdrop-blur-xl border-t border-encip-deep/5">
+            <div class="px-6 py-6 space-y-4">
+                <a href="#mapa" class="block text-encip-deep font-medium py-2">Mi Mapa de Navegación</a>
+                <a href="#brujula" class="block text-encip-deep font-medium py-2">Brújula OCDE</a>
+                <a href="#coagencia" class="block text-encip-deep font-medium py-2">Co-Agencia</a>
+                <a href="#timeline" class="block text-encip-deep font-medium py-2">Trayectoria</a>
+                <a href="#contacto" class="block btn-gold px-6 py-3 rounded-full text-center font-semibold mt-4">Inscribirme Ahora</a>
+            </div>
+        </div>
+    </nav>
 
-    // --- Start of constants/questions.ts ---
-    const ALL_QUESTIONS = [
-      { id: 1, text: "¿Cuál de las siguientes actividades disfrutas más?", options: [ { id: 'a', text: "Escuchar música o podcasts", style: LearningStyle.Auditory }, { id: 'b', text: "Ver películas o series", style: LearningStyle.Visual }, { id: 'c', text: "Bailar, hacer deporte o manualidades", style: LearningStyle.Kinesthetic } ] },
-      { id: 2, text: "Cuando ves la televisión, ¿qué tipo de programa prefieres?", options: [ { id: 'a', text: "Documentales o programas sobre descubrimientos y lugares", style: LearningStyle.Visual }, { id: 'c', text: "Noticieros o programas de debate donde se discuten temas", style: LearningStyle.Auditory }, { id: 'b', text: "Programas cómicos o de entretenimiento con mucha acción o participación del público", style: LearningStyle.Kinesthetic }, ] },
-      { id: 3, text: "Cuando conversas con otra persona, tú:", options: [ { id: 'a', text: "La escuchas atentamente, fijándote en el tono de su voz", style: LearningStyle.Auditory }, { id: 'b', text: "La observas, prestando atención a sus gestos y expresiones", style: LearningStyle.Visual }, { id: 'c', text: "Tiendes a tocarla suavemente o a gesticular mucho al hablar", style: LearningStyle.Kinesthetic } ] },
-      { id: 4, text: "Si pudieras adquirir uno de los siguientes artículos para tu tiempo libre, ¿cuál elegirías?", options: [ { id: 'c', text: "Una pantalla grande o un proyector para ver imágenes y videos", style: LearningStyle.Visual }, { id: 'b', text: "Un buen equipo de sonido para música o audiolibros", style: LearningStyle.Auditory }, { id: 'a', text: "Un espacio cómodo para moverte y experimentar (como un taller de manualidades o un equipo deportivo)", style: LearningStyle.Kinesthetic } ] },
-      { id: 5, text: "¿Qué prefieres hacer un sábado por la tarde?", options: [ { id: 'c', text: "Ir al cine a ver una película nueva", style: LearningStyle.Visual }, { id: 'b', text: "Ir a un concierto o escuchar música en vivo", style: LearningStyle.Auditory }, { id: 'a', text: "Realizar alguna actividad física, como pasear o practicar un deporte", style: LearningStyle.Kinesthetic } ] },
-      { id: 6, text: "¿Qué tipo de exámenes se te facilitan más?", options: [ { id: 'b', text: "Exámenes escritos donde puedes organizar tus ideas visualmente", style: LearningStyle.Visual }, { id: 'a', text: "Exámenes orales donde puedes explicar tus respuestas", style: LearningStyle.Auditory }, { id: 'c', text: "Exámenes prácticos o de opción múltiple donde puedes interactuar o elegir", style: LearningStyle.Kinesthetic } ] },
-      { id: 7, text: "¿Cómo te orientas más fácilmente en un lugar nuevo?", options: [ { id: 'a', text: "Mediante el uso de un mapa o viendo señales", style: LearningStyle.Visual }, { id: 'b', text: "Pidiendo indicaciones y escuchando las explicaciones", style: LearningStyle.Auditory }, { id: 'c', text: "A través de la intuición, moviéndote y explorando el lugar", style: LearningStyle.Kinesthetic } ] },
-      { id: 8, text: "En tu tiempo de descanso, prefieres:", options: [ { id: 'b', text: "Observar tu entorno, leer un libro o ver algo interesante", style: LearningStyle.Visual }, { id: 'a', text: "Escuchar música relajante, un podcast o simplemente disfrutar del silencio", style: LearningStyle.Auditory }, { id: 'c', text: "Hacer algo manual, estirarte, o encontrar una postura cómoda para relajarte", style: LearningStyle.Kinesthetic } ] },
-      { id: 9, text: "Te halaga más que te digan que:", options: [ { id: 'a', text: "Tienes buen aspecto o te vistes muy bien", style: LearningStyle.Visual }, { id: 'c', text: "Tienes una conversación interesante o una voz agradable", style: LearningStyle.Auditory }, { id: 'b', text: "Tienes un trato muy agradable o das buenos abrazos", style: LearningStyle.Kinesthetic } ] },
-      { id: 10, text: "¿Cuál de estos ambientes te atrae más?", options: [ { id: 'c', text: "Uno con una hermosa vista, lleno de colores y formas interesantes", style: LearningStyle.Visual }, { id: 'b', text: "Uno en el que se escuchen sonidos agradables, como música o la naturaleza", style: LearningStyle.Auditory }, { id: 'a', text: "Uno en el que te sientas cómodo físicamente, con texturas y temperaturas agradables", style: LearningStyle.Kinesthetic } ] },
-      { id: 11, text: "¿De qué manera se te facilita aprender algo nuevo?", options: [ { id: 'b', text: "Viendo diagramas, escribiéndolo varias veces o usando colores", style: LearningStyle.Visual }, { id: 'a', text: "Repitiéndolo en voz alta, escuchando explicaciones o debatiéndolo", style: LearningStyle.Auditory }, { id: 'c', text: "Haciéndolo, experimentándolo o relacionándolo con algo divertido o una actividad física", style: LearningStyle.Kinesthetic } ] },
-      { id: 12, text: "¿A qué evento prefieres asistir?", options: [ { id: 'b', text: "A una exposición de arte, un desfile de modas o un espectáculo visual", style: LearningStyle.Visual }, { id: 'c', text: "A una charla interesante, un taller donde se explique algo o un debate", style: LearningStyle.Auditory }, { id: 'a', text: "A una reunión social donde puedas interactuar, moverte y participar activamente", style: LearningStyle.Kinesthetic } ] },
-      { id: 13, text: "Te formas una opinión de otras personas principalmente:", options: [ { id: 'c', text: "Por su aspecto, cómo se visten o sus expresiones faciales", style: LearningStyle.Visual }, { id: 'a', text: "Por la sinceridad de su voz, cómo hablan o lo que dicen", style: LearningStyle.Auditory }, { id: 'b', text: "Por la forma de estrecharte la mano, su energía o cómo se mueven", style: LearningStyle.Kinesthetic } ] },
-      { id: 14, text: "¿Cómo te consideras?", options: [ { id: 'a', text: "Atlético/a (disfrutas el movimiento y ver acciones)", style: LearningStyle.Visual }, { id: 'b', text: "Intelectual (te gusta escuchar ideas y analizar información)", style: LearningStyle.Auditory }, { id: 'c', text: "Sociable (te gusta interactuar y sentir la conexión con otros)", style: LearningStyle.Kinesthetic }, ] },
-      { id: 15, text: "¿Qué tipo de películas te gustan más?", options: [ { id: 'b', text: "De acción o con muchos efectos visuales", style: LearningStyle.Visual }, { id: 'a', text: "Con diálogos inteligentes, buena música o historias bien contadas", style: LearningStyle.Auditory }, { id: 'c', text: "Que te hagan sentir emociones intensas o te involucren en la trama", style: LearningStyle.Kinesthetic } ] },
-      { id: 16, text: "Prefieres mantener contacto con otra persona:", options: [ { id: 'a', text: "Por videollamada o enviando fotos/videos", style: LearningStyle.Visual }, { id: 'c', text: "Por teléfono o mensajes de voz", style: LearningStyle.Auditory }, { id: 'b', text: "En persona, tomando un café o dando un paseo juntos", style: LearningStyle.Kinesthetic } ] },
-      { id: 17, text: "¿Cuál de las siguientes frases te identifica más con tu auto (o un vehículo que te guste)?", options: [ { id: 'c', text: "Es importante que mi auto esté limpio y se vea bien por fuera y por dentro", style: LearningStyle.Visual }, { id: 'b', text: "Percibo hasta el más ligero ruido que hace mi auto y me gusta cómo suena el motor", style: LearningStyle.Auditory }, { id: 'a', text: "Me gusta que mi auto se sienta bien al conducirlo, la comodidad y cómo responde", style: LearningStyle.Kinesthetic } ] },
-      { id: 18, text: "¿Cómo prefieres pasar el tiempo con tu pareja o un buen amigo/a?", options: [ { id: 'c', text: "Mirando algo juntos (una película, un paisaje) u observándose", style: LearningStyle.Visual }, { id: 'a', text: "Conversando, contándose cosas o escuchando música juntos", style: LearningStyle.Auditory }, { id: 'b', text: "Haciendo alguna actividad juntos, abrazándose o simplemente sintiendo su compañía", style: LearningStyle.Kinesthetic } ] },
-      { id: 19, text: "Si no encuentras las llaves en una bolsa o mochila:", options: [ { id: 'a', text: "La buscas mirando cuidadosamente dentro y moviendo las cosas para ver mejor", style: LearningStyle.Visual }, { id: 'b', text: "Sacudes la bolsa para oír el ruido de las llaves o preguntas si alguien las ha oído", style: LearningStyle.Auditory }, { id: 'c', text: "Buscas al tacto, metiendo la mano y palpando hasta encontrarlas", style: LearningStyle.Kinesthetic } ] },
-      { id: 20, text: "Cuando tratas de recordar algo, ¿cómo lo haces principalmente?", options: [ { id: 'a', text: "A través de imágenes mentales, visualizando la situación o la información", style: LearningStyle.Visual }, { id: 'c', text: "A través de sonidos, recordando lo que se dijo o escuchando una voz interna", style: LearningStyle.Auditory }, { id: 'b', text: "A través de emociones o sensaciones físicas, recordando cómo te sentiste", style: LearningStyle.Kinesthetic } ] },
-      { id: 21, text: "Si tuvieras una gran suma de dinero inesperada, ¿qué harías primero?", options: [ { id: 'b', text: "Viajar para ver paisajes asombrosos y explorar nuevos lugares", style: LearningStyle.Visual }, { id: 'c', text: "Crear un estudio para grabar música, podcasts o contar historias", style: LearningStyle.Auditory }, { id: 'a', text: "Construir o remodelar un espacio para vivir y disfrutar de actividades físicas", style: LearningStyle.Kinesthetic } ] },
-      { id: 22, text: "¿Qué frase te identifica más?", options: [ { id: 'c', text: "Recuerdo el aspecto de alguien, pero a veces olvido su nombre", style: LearningStyle.Visual }, { id: 'a', text: "Reconozco a las personas por su voz fácilmente", style: LearningStyle.Auditory }, { id: 'b', text: "No siempre recuerdo el aspecto de la gente, pero sí la impresión que me causaron", style: LearningStyle.Kinesthetic } ] },
-      { id: 23, text: "Si tuvieras que quedarte en una isla desierta, preferirías llevar contigo:", options: [ { id: 'a', text: "Algunos buenos libros o cuadernos para dibujar y escribir", style: LearningStyle.Visual }, { id: 'b', text: "Un radio portátil de alta frecuencia o un reproductor de música con mucha batería", style: LearningStyle.Auditory }, { id: 'c', text: "Herramientas para construir cosas, semillas para plantar o equipo deportivo", style: LearningStyle.Kinesthetic } ] },
-      { id: 24, text: "¿Cuál de estos entretenimientos prefieres?", options: [ { id: 'b', text: "Sacar fotografías o filmar videos", style: LearningStyle.Visual }, { id: 'a', text: "Tocar un instrumento musical o cantar", style: LearningStyle.Auditory }, { id: 'c', text: "Hacer actividades manuales, cocinar o jardinería", style: LearningStyle.Kinesthetic } ] },
-      { id: 25, text: "Al aprender un baile nuevo, ¿qué te ayuda más?", options: [ { id: 'a', text: "Ver al instructor hacer los movimientos y luego imitarlos", style: LearningStyle.Visual }, { id: 'b', text: "Escuchar el ritmo de la música y las instrucciones verbales paso a paso", style: LearningStyle.Auditory }, { id: 'c', text: "Sentir el movimiento en tu cuerpo y practicarlo repetidamente", style: LearningStyle.Kinesthetic } ] },
-      { id: 26, text: "Cuando armas un mueble o sigues instrucciones para un proyecto, ¿qué haces primero?", options: [ { id: 'c', text: "Miras los diagramas e imágenes detenidamente", style: LearningStyle.Visual }, { id: 'b', text: "Pides que alguien te lea las instrucciones o las lees en voz alta", style: LearningStyle.Auditory }, { id: 'a', text: "Empiezas a manipular las piezas para entender cómo encajan", style: LearningStyle.Kinesthetic } ] },
-      { id: 27, text: "¿Qué te molesta más en una biblioteca o lugar de estudio?", options: [ { id: 'b', text: "El desorden visual, luces muy brillantes o parpadeantes", style: LearningStyle.Visual }, { id: 'a', text: "Los susurros, ruidos constantes o música que no te gusta", style: LearningStyle.Auditory }, { id: 'c', text: "Una silla incómoda, la temperatura inadecuada o no poder moverte", style: LearningStyle.Kinesthetic } ] },
-      { id: 28, text: "Si te regalan algo, ¿qué aprecias más?", options: [ { id: 'c', text: "Que sea visualmente atractivo, bien envuelto o con colores bonitos", style: LearningStyle.Visual }, { id: 'b', text: "Las palabras que te dicen al dártelo o una tarjeta con un mensaje especial", style: LearningStyle.Auditory }, { id: 'a', text: "El gesto en sí, que sea algo útil que puedas usar o una experiencia para disfrutar", style: LearningStyle.Kinesthetic } ] },
-      { id: 29, text: "¿Cómo prefieres que te expliquen cómo llegar a un sitio?", options: [ { id: 'b', text: "Con un mapa o un dibujo que muestre el camino", style: LearningStyle.Visual }, { id: 'c', text: "Con instrucciones verbales claras y detalladas", style: LearningStyle.Auditory }, { id: 'a', text: "Que te acompañen la primera vez o te den referencias que puedas sentir/experimentar (ej: 'gira después del edificio rojo que se siente frío')", style: LearningStyle.Kinesthetic } ] },
-      { id: 30, text: "En una clase o presentación, ¿qué capta más tu atención?", options: [ { id: 'c', text: "Las diapositivas coloridas, videos o demostraciones visuales", style: LearningStyle.Visual }, { id: 'b', text: "El tono de voz del presentador, las historias interesantes o las discusiones", style: LearningStyle.Auditory }, { id: 'a', text: "Las actividades prácticas, poder moverte o interactuar con objetos", style: LearningStyle.Kinesthetic } ] },
-      { id: 31, text: "Cuando lees un libro, ¿qué es lo más importante para ti?", options: [ { id: 'b', text: "Las descripciones detalladas que te permiten imaginar las escenas", style: LearningStyle.Visual }, { id: 'a', text: "Los diálogos ingeniosos o la forma en que está narrada la historia (el 'sonido' de las palabras)", style: LearningStyle.Auditory }, { id: 'c', text: "La emoción que te transmite la historia o poder 'sentir' lo que viven los personajes", style: LearningStyle.Kinesthetic } ] },
-      { id: 32, text: "Si tienes que recordar un número de teléfono, ¿cómo lo haces?", options: [ { id: 'c', text: "Visualizándolo escrito o imaginando los números en un teclado", style: LearningStyle.Visual }, { id: 'a', text: "Repitiéndolo en voz alta o para tus adentros varias veces", style: LearningStyle.Auditory }, { id: 'b', text: "Marcándolo varias veces en un teléfono (real o imaginario) o asociándolo con un ritmo", style: LearningStyle.Kinesthetic } ] },
-      { id: 33, text: "¿Qué tipo de arte disfrutas más?", options: [ { id: 'a', text: "La pintura, la fotografía o el cine", style: LearningStyle.Visual }, { id: 'c', text: "La música, la poesía recitada o el teatro con buenos diálogos", style: LearningStyle.Auditory }, { id: 'b', text: "La escultura (poder tocarla), la danza o el arte interactivo", style: LearningStyle.Kinesthetic } ] },
-      { id: 34, text: "Cuando estás en un grupo, ¿cómo sueles participar?", options: [ { id: 'b', text: "Observando a los demás y el entorno antes de hablar", style: LearningStyle.Visual }, { id: 'a', text: "Escuchando atentamente y aportando tus ideas verbalmente", style: LearningStyle.Auditory }, { id: 'c', text: "Moviéndote, gesticulando o participando en actividades grupales", style: LearningStyle.Kinesthetic } ] },
-      { id: 35, text: "¿Qué te ayuda a concentrarte cuando estudias o trabajas?", options: [ { id: 'b', text: "Tener un espacio ordenado y visualmente agradable, con buena iluminación", style: LearningStyle.Visual }, { id: 'c', text: "El silencio absoluto o música instrumental suave que no distraiga", style: LearningStyle.Auditory }, { id: 'a', text: "Poder moverte, tomar descansos activos o tener algo en las manos (un bolígrafo, una pelota antiestrés)", style: LearningStyle.Kinesthetic } ] },
-      { id: 36, text: "Si aprendes un nuevo idioma, ¿qué te resulta más fácil?", options: [ { id: 'a', text: "Leer y ver palabras escritas, asociar imágenes con vocabulario", style: LearningStyle.Visual }, { id: 'c', text: "Escuchar a hablantes nativos, practicar la pronunciación y conversar", style: LearningStyle.Auditory }, { id: 'b', text: "Usar gestos, actuar escenas o aprender mediante juegos de roles", style: LearningStyle.Kinesthetic } ] },
-      { id: 37, text: "Cuando eliges ropa, ¿en qué te fijas principalmente?", options: [ { id: 'a', text: "En los colores, el diseño y cómo te ves con ella", style: LearningStyle.Visual }, { id: 'b', text: "En lo que dicen los demás sobre cómo te queda o si el tejido hace algún ruido particular (ej. seda)", style: LearningStyle.Auditory }, { id: 'c', text: "En cómo se siente la tela al tacto, la comodidad y si te permite moverte libremente", style: LearningStyle.Kinesthetic } ] },
-      { id: 38, text: "¿Qué tipo de vacaciones prefieres?", options: [ { id: 'b', text: "Un lugar con paisajes impresionantes, museos o arquitectura interesante para ver", style: LearningStyle.Visual }, { id: 'c', text: "Un lugar con mucha vida cultural, música, festivales o donde puedas aprender un idioma", style: LearningStyle.Auditory }, { id: 'a', text: "Un lugar donde puedas hacer actividades al aire libre, deportes, explorar o relajarte en la naturaleza", style: LearningStyle.Kinesthetic } ] },
-      { id: 39, text: "Al contar una historia o anécdota, ¿qué sueles enfatizar?", options: [ { id: 'b', text: "Los detalles visuales, cómo se veían las cosas o las personas", style: LearningStyle.Visual }, { id: 'c', text: "Lo que se dijo, los sonidos o el tono de voz de los involucrados", style: LearningStyle.Auditory }, { id: 'a', text: "Las acciones, tus sensaciones o cómo te moviste durante el evento", style: LearningStyle.Kinesthetic } ] },
-      { id: 40, text: "¿Qué es lo primero que notas al entrar a una habitación nueva?", options: [ { id: 'c', text: "La decoración, los colores, la luz y cómo están distribuidos los objetos", style: LearningStyle.Visual }, { id: 'a', text: "Los sonidos, la música ambiente, las conversaciones o el silencio", style: LearningStyle.Auditory }, { id: 'b', text: "La temperatura, el ambiente general (si es acogedor o no), el espacio para moverte", style: LearningStyle.Kinesthetic } ] }
-    ];
-    const QUESTIONS_PER_BLOCK = 5;
-    // --- End of constants/questions.ts ---
+    <!-- ==================== HERO SECTION ==================== -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden gradient-hero noise">
+        <!-- Mesh Gradient Background -->
+        <div class="mesh-gradient"></div>
 
-    // --- Start of components/StyledButton.tsx ---
-    const StyledButton = ({ children, variant = 'primary', size = 'md', fullWidth = false, className = '', ...props }) => {
-      const baseStyles = 'font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-all duration-150 ease-in-out transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100';
-      const variantStyles = {
-        primary: 'bg-indigo-500 hover:bg-indigo-600 text-white focus:ring-indigo-400',
-        secondary: 'bg-slate-600 hover:bg-slate-500 text-slate-100 focus:ring-slate-400',
-        success: 'bg-emerald-500 hover:bg-emerald-600 text-white focus:ring-emerald-400',
-      };
-      const sizeStyles = {
-        sm: 'px-3 py-1.5 text-sm',
-        md: 'px-4 py-2 text-base',
-        lg: 'px-6 py-3 text-lg',
-      };
-      const widthStyles = fullWidth ? 'w-full' : '';
-      return (
-        React.createElement("button", {
-          className: `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyles} ${className}`,
-          ...props
-        }, children)
-      );
-    };
-    // --- End of components/StyledButton.tsx ---
+        <!-- Orbital Rings -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] orbital-ring hidden lg:block"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] orbital-ring orbital-ring-reverse hidden lg:block"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] orbital-ring hidden lg:block" style="animation-duration: 40s;"></div>
 
-    // --- Start of components/ProgressBar.tsx ---
-    const ProgressBar = ({ current, total }) => {
-      const percentage = total > 0 ? (current / total) * 100 : 0;
-      return (
-        React.createElement("div", { className: "w-full bg-slate-700 rounded-full h-2.5 mb-6 shadow-inner" },
-          React.createElement("div", {
-            className: "bg-indigo-500 h-2.5 rounded-full transition-all duration-500 ease-out",
-            style: { width: `${percentage}%` }
-          }))
-      );
-    };
-    // --- End of components/ProgressBar.tsx ---
+        <!-- Floating Glass Cards -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            <div class="glass-card absolute top-[12%] left-[6%] w-52 h-36 rounded-2xl animate-float opacity-50"></div>
+            <div class="glass-card absolute top-[22%] right-[8%] w-40 h-28 rounded-2xl animate-float-delay opacity-40"></div>
+            <div class="glass-card absolute bottom-[18%] left-[12%] w-44 h-32 rounded-2xl animate-float-delay-2 opacity-35"></div>
+            <div class="glass-card absolute bottom-[28%] right-[10%] w-36 h-24 rounded-2xl animate-float opacity-45"></div>
+            <div class="glass-card absolute top-[55%] left-[4%] w-32 h-24 rounded-2xl animate-float-delay opacity-25"></div>
+            <div class="glass-card absolute top-[40%] right-[5%] w-28 h-20 rounded-2xl animate-float-delay-2 opacity-30"></div>
+        </div>
 
-    // --- Start of components/QuestionDisplay.tsx ---
-    const QuestionDisplay = ({ question, onAnswer, selectedOption }) => {
-      return (
-        React.createElement("div", { className: "mb-8 p-6 bg-dark-card rounded-lg shadow-lg animate-slide-in-up" },
-          React.createElement("h2", { className: "text-xl font-semibold text-dark-text-primary mb-6" },
-            React.createElement("span", { className: "text-indigo-400 font-bold mr-2" }, `${question.id}.`),
-            question.text
-          ),
-          React.createElement("div", { className: "space-y-3" },
-            question.options.map((option) => (
-              React.createElement("button", {
-                key: option.id,
-                onClick: () => onAnswer(question.id, option.style),
-                className: `
-                  w-full text-left p-4 rounded-md border-2 
-                  transition-all duration-200 ease-in-out
-                  hover:shadow-md
-                  focus:outline-none focus:ring-2 focus:ring-opacity-50
-                  ${selectedOption === option.style 
-                    ? 'bg-indigo-600 border-indigo-500 ring-2 ring-indigo-500 text-white font-semibold' 
-                    : 'bg-slate-700 hover:bg-indigo-700 hover:border-indigo-500 border-dark-border text-dark-text-secondary hover:text-dark-text-primary'}
-                `
-              },
-              React.createElement("span", { className: "font-medium mr-2" }, `${option.id.toUpperCase()})`), ` ${option.text}`)
-            ))
-          )
-        )
-      );
-    };
-    // --- End of components/QuestionDisplay.tsx ---
+        <!-- Decorative Blobs -->
+        <div class="absolute top-16 right-16 w-72 h-72 rounded-full bg-encip-gold/4 blur-3xl animate-breathe"></div>
+        <div class="absolute bottom-16 left-16 w-96 h-96 rounded-full bg-encip-royal/4 blur-3xl animate-breathe" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/3 left-1/4 w-64 h-64 rounded-full bg-encip-accent/3 blur-3xl animate-breathe" style="animation-delay: 1s;"></div>
 
-    // --- Start of components/IntroductionScreen.tsx ---
-    const IntroductionScreen = ({ onStartQuiz }) => {
-      return (
-        React.createElement("div", { className: "bg-dark-card p-6 sm:p-8 rounded-xl shadow-2xl animate-fade-in text-center" },
-          React.createElement("div", { className: "flex justify-center items-center space-x-4 mb-6" },
-            React.createElement(EyeIcon, { className: "w-10 h-10 text-visual" }),
-            React.createElement(EarIcon, { className: "w-10 h-10 text-auditory" }),
-            React.createElement(MotionIcon, { className: "w-10 h-10 text-kinesthetic" })
-          ),
-          React.createElement("h1", { className: "text-3xl sm:text-4xl font-bold text-dark-text-primary mb-4" },
-            "Test VAK: Descubre tu Estilo de Aprendizaje"
-          ),
-          React.createElement("p", { className: "text-dark-text-secondary mb-3 text-sm sm:text-base" },
-            "¡Bienvenido/a! Este test te ayudará a conocer más sobre tu tipo de percepción dominante (Visual, Auditivo o Kinestésico) al momento de capturar y procesar información."
-          ),
-          React.createElement("p", { className: "text-dark-text-secondary mb-6 text-sm sm:text-base" },
-            "El aprendizaje es un proceso activo y dinámico. Conocer tu estilo propio puede facilitar y potenciar tu aprendizaje."
-          ),
-          React.createElement("h2", { className: "text-xl font-semibold text-dark-text-primary mb-3" }, "Instrucciones"),
-          React.createElement("p", { className: "text-dark-text-secondary mb-6 text-sm sm:text-base" },
-            "Responde a las siguientes preguntas seleccionando la opción que mejor se adapte a tus preferencias. No hay respuestas correctas o incorrectas, ¡simplemente sé tú mismo/a!"
-          ),
-          React.createElement(StyledButton, { onClick: onStartQuiz, size: "lg", fullWidth: true },
-            "Comenzar Test"
-          )
-        )
-      );
-    };
-    // --- End of components/IntroductionScreen.tsx ---
+        <div class="relative z-10 max-w-7xl mx-auto px-6 py-32 grid lg:grid-cols-2 gap-12 items-center">
+            <!-- Text Content -->
+            <div class="text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass-card mb-8 reveal">
+                    <span class="w-2 h-2 rounded-full bg-encip-gold animate-pulse"></span>
+                    <span class="text-xs font-semibold text-encip-deep/60 uppercase tracking-[0.2em]">Más de 20 años formando líderes</span>
+                </div>
 
-    // --- Start of components/QuizScreen.tsx ---
-    const QuizScreen = ({ onQuizComplete }) => {
-      const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
-      const [answers, setAnswers] = useState([]);
-      const totalBlocks = Math.ceil(ALL_QUESTIONS.length / QUESTIONS_PER_BLOCK);
-      const questionsInCurrentBlock = ALL_QUESTIONS.slice(
-        currentBlockIndex * QUESTIONS_PER_BLOCK,
-        (currentBlockIndex + 1) * QUESTIONS_PER_BLOCK
-      );
-      const handleAnswer = (questionId, style) => {
-        setAnswers((prevAnswers) => {
-          const existingAnswerIndex = prevAnswers.findIndex(a => a.questionId === questionId);
-          if (existingAnswerIndex > -1) {
-            const updatedAnswers = [...prevAnswers];
-            updatedAnswers[existingAnswerIndex] = { questionId, style };
-            return updatedAnswers;
-          }
-          return [...prevAnswers, { questionId, style }];
-        });
-      };
-      const getSelectedOptionForQuestion = (questionId) => {
-        const answer = answers.find(a => a.questionId === questionId);
-        return answer ? answer.style : null;
-      };
-      const handleNextBlock = () => {
-        if (currentBlockIndex < totalBlocks - 1) {
-          setCurrentBlockIndex(currentBlockIndex + 1);
-        } else {
-          onQuizComplete(answers);
-        }
-      };
-      const handlePreviousBlock = () => {
-        if (currentBlockIndex > 0) {
-          setCurrentBlockIndex(currentBlockIndex - 1);
-        }
-      };
-      const isCurrentBlockAnswered = () => {
-        return questionsInCurrentBlock.every(q => answers.some(a => a.questionId === q.id));
-      };
-      useEffect(() => {
-        window.scrollTo(0, 0);
-      }, [currentBlockIndex]);
-      return (
-        React.createElement("div", { className: "bg-dark-card p-6 sm:p-8 rounded-xl shadow-2xl animate-fade-in w-full" },
-          React.createElement("h1", { className: "text-2xl sm:text-3xl font-bold text-dark-text-primary mb-2 text-center" },
-            "Cuestionario VAK"
-          ),
-          React.createElement("p", { className: "text-center text-dark-text-muted mb-6" },
-            `Bloque ${currentBlockIndex + 1} de ${totalBlocks}`
-          ),
-          React.createElement(ProgressBar, { current: currentBlockIndex * QUESTIONS_PER_BLOCK + questionsInCurrentBlock.filter(q => answers.some(a => a.questionId === q.id)).length, total: ALL_QUESTIONS.length }),
-          questionsInCurrentBlock.map((question) => (
-            React.createElement(QuestionDisplay, {
-              key: question.id,
-              question: question,
-              onAnswer: handleAnswer,
-              selectedOption: getSelectedOptionForQuestion(question.id)
-            })
-          )),
-          React.createElement("div", { className: "mt-8 flex flex-col sm:flex-row justify-between space-y-3 sm:space-y-0 sm:space-x-4" },
-            React.createElement(StyledButton, {
-              onClick: handlePreviousBlock,
-              disabled: currentBlockIndex === 0,
-              variant: "secondary",
-              className: currentBlockIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
-            }, "Anterior"),
-            React.createElement(StyledButton, {
-              onClick: handleNextBlock,
-              disabled: !isCurrentBlockAnswered(),
-              variant: currentBlockIndex === totalBlocks - 1 ? 'success' : 'primary',
-              className: !isCurrentBlockAnswered() ? 'opacity-50 cursor-not-allowed' : ''
-            }, currentBlockIndex === totalBlocks - 1 ? 'Finalizar y Ver Resultados' : 'Siguiente')
-          )
-        )
-      );
-    };
-    // --- End of components/QuizScreen.tsx ---
+                <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-encip-deep leading-[0.95] mb-8 reveal">
+                    ENCIP<br>
+                    <span class="text-gradient-gold">Navegando</span><br>
+                    <span class="text-encip-deep/80">hacia tu</span><br>
+                    <span class="italic text-encip-royal/80">Futuro</span>
+                </h1>
 
-    // --- Start of components/ResultsScreen.tsx ---
-    const LEARNING_STYLE_INFO = {
-      [LearningStyle.Visual]: { title: "Visual", description: "Aprendes principalmente mediante imágenes. Te fijas en las características que puedes ver e imaginar. Sueles recordar mejor la información si la ves escrita, en diagramas o gráficos. Los colores, las formas y la organización espacial son importantes para ti.", tips: [ "Utiliza mapas mentales y esquemas.", "Subraya y usa colores en tus apuntes.", "Visualiza la información en tu mente.", "Busca videos y demostraciones visuales." ], color: "text-visual", icon: EyeIcon, chartColor: "#34D399" },
-      [LearningStyle.Auditory]: { title: "Auditivo", description: "Aprendes principalmente mediante sonidos. Recuerdas mejor lo que oyes y lo que dices. Las explicaciones orales, los debates y la música te ayudan a aprender. El tono de voz y las palabras clave son importantes para ti.", tips: [ "Lee en voz alta tus apuntes.", "Graba las clases o explicaciones y escúchalas.", "Participa en debates y discusiones.", "Estudia con música (si te ayuda a concentrarte)." ], color: "text-auditory", icon: EarIcon, chartColor: "#F59E0B" },
-      [LearningStyle.Kinesthetic]: { title: "Kinestésico", description: "Aprendes principalmente mediante el movimiento, el tacto y la experiencia directa. Necesitas involucrarte físicamente en las actividades para comprender y recordar. Las sensaciones y emociones son clave en tu aprendizaje.", tips: [ "Aprende haciendo: realiza experimentos y proyectos.", "Utiliza material manipulable.", "Toma descansos activos y muévete mientras estudias.", "Relaciona el aprendizaje con experiencias reales." ], color: "text-kinesthetic", icon: MotionIcon, chartColor: "#EC4899" },
-    };
-    const ResultsScreen = ({ results, onRestartQuiz }) => {
-      const totalAnswers = results.visual + results.auditory + results.kinesthetic;
-      const data = [
-        { name: 'Visual', porcentaje: totalAnswers > 0 ? parseFloat(((results.visual / totalAnswers) * 100).toFixed(1)) : 0, fill: LEARNING_STYLE_INFO.Visual.chartColor },
-        { name: 'Auditivo', porcentaje: totalAnswers > 0 ? parseFloat(((results.auditory / totalAnswers) * 100).toFixed(1)) : 0, fill: LEARNING_STYLE_INFO.Auditory.chartColor },
-        { name: 'Kinestésico', porcentaje: totalAnswers > 0 ? parseFloat(((results.kinesthetic / totalAnswers) * 100).toFixed(1)) : 0, fill: LEARNING_STYLE_INFO.Kinesthetic.chartColor },
-      ];
-      const sortedResults = data.sort((a, b) => b.porcentaje - a.porcentaje);
-      const dominantStyleKey = sortedResults[0].name === 'Visual' ? LearningStyle.Visual : sortedResults[0].name === 'Auditivo' ? LearningStyle.Auditory : LearningStyle.Kinesthetic;
-      const dominantStyleInfo = LEARNING_STYLE_INFO[dominantStyleKey];
-      return (
-        React.createElement("div", { className: "bg-dark-card p-6 sm:p-8 rounded-xl shadow-2xl animate-fade-in" },
-          React.createElement("h1", { className: "text-3xl sm:text-4xl font-bold text-dark-text-primary mb-6 text-center" }, "Tus Resultados VAK"),
-          React.createElement("div", { className: "mb-8 h-64 sm:h-80 w-full" },
-            React.createElement(ResponsiveContainer, { width: "100%", height: "100%" },
-              React.createElement(BarChart, { data: data, margin: { top: 5, right: 0, left: -25, bottom: 5 } },
-                React.createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#334155" }),
-                React.createElement(XAxis, { dataKey: "name", tick: { fill: '#94A3B8', fontSize: 12 } }),
-                React.createElement(YAxis, { unit: "%", tick: { fill: '#94A3B8', fontSize: 12 }, domain: [0, 100] }),
-                React.createElement(Tooltip, {
-                  formatter: (value) => `${value}%`,
-                  cursor: {fill: 'rgba(71, 85, 105, 0.4)'},
-                  contentStyle: { backgroundColor: '#1E293B', borderRadius: '0.5rem', borderColor: '#334155', color: '#F1F5F9' }
-                }),
-                React.createElement(Legend, { wrapperStyle: { fontSize: '14px', paddingTop: '10px', color: '#CBD5E1' } }),
-                React.createElement(Bar, { dataKey: "porcentaje", barSize: 40 },
-                  data.map((entry, index) => (
-                    React.createElement(Cell, { key: `cell-${index}`, fill: entry.fill })
-                  ))
-                )
-              )
-            )
-          ),
-          React.createElement("div", { className: "mb-8 text-center" },
-            React.createElement("h2", { className: `text-2xl font-semibold ${dominantStyleInfo.color} mb-2` },
-              `Tu estilo predominante es ${dominantStyleInfo.title}`
-            ),
-            React.createElement("p", { className: "text-dark-text-secondary" },
-              "Esto sugiere una preferencia por aprender a través de este canal, ¡pero recuerda que todos usamos una combinación de estilos!"
-            )
-          ),
-          React.createElement("div", { className: "space-y-6 mb-8" },
-            (Object.keys(LEARNING_STYLE_INFO)).map((styleKey) => {
-              const info = LEARNING_STYLE_INFO[styleKey];
-              const Icon = info.icon;
-              const percentage = data.find(d => d.name === info.title)?.porcentaje || 0;
-              return (
-                React.createElement("div", { key: styleKey, className: "p-4 border border-dark-border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-slate-700/30" },
-                  React.createElement("div", { className: "flex items-center mb-3" },
-                    React.createElement(Icon, { className: `w-8 h-8 mr-3 ${info.color}` }),
-                    React.createElement("h3", { className: `text-xl font-semibold ${info.color}` }, `${info.title} (${percentage}%)`)
-                  ),
-                  React.createElement("p", { className: "text-dark-text-secondary text-sm mb-2" }, info.description),
-                  React.createElement("p", { className: "text-dark-text-primary font-medium text-sm mb-1" }, "Consejos para potenciar tu aprendizaje:"),
-                  React.createElement("ul", { className: "list-disc list-inside text-dark-text-secondary text-sm space-y-1" },
-                    info.tips.map((tip, index) => React.createElement("li", { key: index }, tip))
-                  )
-                )
-              );
-            })
-          ),
-          React.createElement("div", { className: "text-center space-y-4" },
-            React.createElement("p", { className: "text-dark-text-secondary text-sm" },
-              "¡Esperamos que este test te haya sido útil! Conocer tu estilo de aprendizaje es el primer paso para estudiar de forma más efectiva y disfrutar más del proceso."
-            ),
-            React.createElement(StyledButton, { onClick: onRestartQuiz, size: "lg", variant: "primary", fullWidth: true },
-              "Volver a Comenzar el Test"
-            ),
-            React.createElement(StyledButton, { 
-                onClick: () => alert("¡Comparte tus resultados con amigos!\nPuedes tomar una captura de pantalla o contarles sobre tu estilo de aprendizaje VAK."),
-                variant: "secondary",
-                size: "md",
-                fullWidth: true
-              },
-              "Compartir Resultados (simulado)"
-            )
-          )
-        )
-      );
-    };
-    // --- End of components/ResultsScreen.tsx ---
+                <p class="text-lg md:text-xl text-encip-deep/50 max-w-lg mx-auto lg:mx-0 mb-10 leading-relaxed reveal">
+                    Más que estudiar, aprende a <span class="text-encip-royal font-semibold">dirigir tu vida</span> con propósito, autonomía y visión. Formamos personas capaces de tomar decisiones y navegar su futuro con confianza.
+                </p>
 
-    // --- Start of App.tsx ---
-    const App = () => {
-      const [currentScreen, setCurrentScreen] = useState(AppScreen.Introduction);
-      const [quizResults, setQuizResults] = useState(null);
-      const handleStartQuiz = useCallback(() => {
-        setCurrentScreen(AppScreen.Quiz);
-        setQuizResults(null);
-      }, []);
-      const handleQuizComplete = useCallback((answers) => {
-        if (answers.length < ALL_QUESTIONS.length) {
-            alert("Por favor completa todas las preguntas antes de ver los resultados.");
-            return;
-        }
-        const results = {
-          visual: 0,
-          auditory: 0,
-          kinesthetic: 0,
-        };
-        answers.forEach(answer => {
-          if (answer.style === LearningStyle.Visual) results.visual++;
-          else if (answer.style === LearningStyle.Auditory) results.auditory++;
-          else if (answer.style === LearningStyle.Kinesthetic) results.kinesthetic++;
-        });
-        setQuizResults(results);
-        setCurrentScreen(AppScreen.Results);
-      }, []);
-      const handleRestartQuiz = useCallback(() => {
-        setCurrentScreen(AppScreen.Introduction);
-        setQuizResults(null);
-      }, []);
-      const renderScreen = () => {
-        switch (currentScreen) {
-          case AppScreen.Introduction:
-            return React.createElement(IntroductionScreen, { onStartQuiz: handleStartQuiz });
-          case AppScreen.Quiz:
-            return React.createElement(QuizScreen, { onQuizComplete: handleQuizComplete });
-          case AppScreen.Results:
-            return quizResults ? React.createElement(ResultsScreen, { results: quizResults, onRestartQuiz: handleRestartQuiz }) : React.createElement(IntroductionScreen, { onStartQuiz: handleStartQuiz });
-          default:
-            return React.createElement(IntroductionScreen, { onStartQuiz: handleStartQuiz });
-        }
-      };
-      return (
-        React.createElement("div", { className: "container mx-auto py-8" },
-          renderScreen(),
-          React.createElement("footer", { className: "text-center text-xs text-dark-text-muted mt-10" },
-            React.createElement("p", null, "Test VAK Interactivo. Basado en el modelo de Programación Neurolingüística."),
-            React.createElement("p", null, "Material Psicoeducativo para fines didácticos y de aprendizaje.")
-          )
-        )
-      );
-    };
-    // --- End of App.tsx ---
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start reveal">
+                    <a href="#mapa" class="btn-primary px-8 py-4 rounded-full text-sm font-bold shadow-2xl inline-flex items-center justify-center gap-2 group">
+                        <span>Descubrir mi Ruta</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="group-hover:translate-x-1 transition-transform">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#mapa" class="glass-card px-8 py-4 rounded-full text-sm font-semibold text-encip-deep inline-flex items-center justify-center gap-2 hover:bg-white/90 transition-all">
+                        <span>Explorar Modalidades</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </a>
+                </div>
 
-    // --- Start of index.tsx (ReactDOM rendering part) ---
-    const rootElement = document.getElementById('root');
-    if (!rootElement) {
-      throw new Error("Could not find root element to mount to");
+                <!-- Stats -->
+                <div class="flex gap-8 mt-14 justify-center lg:justify-start reveal">
+                    <div class="stat-card text-center glass-card rounded-2xl px-5 py-4">
+                        <div class="text-3xl md:text-4xl font-bold text-encip-deep counter font-display" data-target="20">0</div>
+                        <div class="text-[10px] text-encip-deep/40 uppercase tracking-[0.15em] mt-1 font-medium">Años de<br>experiencia</div>
+                    </div>
+                    <div class="stat-card text-center glass-card rounded-2xl px-5 py-4">
+                        <div class="text-3xl md:text-4xl font-bold text-encip-deep counter font-display" data-target="7000">0</div>
+                        <div class="text-[10px] text-encip-deep/40 uppercase tracking-[0.15em] mt-1 font-medium">Egresados<br>formados</div>
+                    </div>
+                    <div class="stat-card text-center glass-card rounded-2xl px-5 py-4">
+                        <div class="text-3xl md:text-4xl font-bold text-encip-deep counter font-display" data-target="30">0</div>
+                        <div class="text-[10px] text-encip-deep/40 uppercase tracking-[0.15em] mt-1 font-medium">Servicios<br>disponibles</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Compass -->
+            <div class="relative flex items-center justify-center reveal-scale">
+                <div class="relative w-[340px] h-[340px] md:w-[440px] md:h-[440px]">
+                    <div class="absolute inset-0 rounded-full bg-encip-gold/8 blur-3xl animate-pulse-glow"></div>
+
+                    <svg class="compass-svg w-full h-full" viewBox="0 0 400 400" id="heroCompass">
+                        <circle cx="200" cy="200" r="195" fill="none" stroke="rgba(201,162,39,0.15)" stroke-width="1" class="compass-ring" id="outerRing"/>
+                        <circle cx="200" cy="200" r="185" fill="none" stroke="rgba(6,26,61,0.08)" stroke-width="1" stroke-dasharray="3 8"/>
+                        <g class="compass-ring" id="cardinalRing">
+                            <text x="200" y="22" text-anchor="middle" fill="#C9A227" font-size="16" font-weight="800" font-family="Space Grotesk">N</text>
+                            <text x="200" y="392" text-anchor="middle" fill="#061A3D" font-size="16" font-weight="800" font-family="Space Grotesk">S</text>
+                            <text x="22" y="208" text-anchor="middle" fill="#061A3D" font-size="16" font-weight="800" font-family="Space Grotesk">O</text>
+                            <text x="378" y="208" text-anchor="middle" fill="#061A3D" font-size="16" font-weight="800" font-family="Space Grotesk">E</text>
+                            <line x1="200" y1="12" x2="200" y2="38" stroke="#C9A227" stroke-width="2.5"/>
+                            <line x1="200" y1="362" x2="200" y2="388" stroke="#061A3D" stroke-width="1.5"/>
+                            <line x1="12" y1="200" x2="38" y2="200" stroke="#061A3D" stroke-width="1.5"/>
+                            <line x1="362" y1="200" x2="388" y2="200" stroke="#061A3D" stroke-width="1.5"/>
+                        </g>
+                        <circle cx="200" cy="200" r="145" fill="none" stroke="rgba(201,162,39,0.1)" stroke-width="1"/>
+                        <circle cx="200" cy="200" r="135" fill="none" stroke="rgba(6,26,61,0.06)" stroke-width="1" stroke-dasharray="2 6"/>
+                        <g class="compass-needle" id="compassNeedle">
+                            <path d="M200 200 L200 55 L212 200 Z" fill="#C9A227" opacity="0.9"/>
+                            <path d="M200 200 L200 345 L188 200 Z" fill="#061A3D" opacity="0.5"/>
+                            <circle cx="200" cy="200" r="14" fill="white" stroke="#C9A227" stroke-width="2.5"/>
+                            <circle cx="200" cy="200" r="7" fill="#C9A227"/>
+                        </g>
+                        <circle cx="200" cy="200" r="55" fill="none" stroke="rgba(201,162,39,0.08)" stroke-width="1"/>
+                        <circle cx="200" cy="200" r="45" fill="none" stroke="rgba(6,26,61,0.04)" stroke-width="1"/>
+                    </svg>
+
+                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 glass-card px-4 py-2 rounded-xl text-xs font-bold text-encip-gold whitespace-nowrap shadow-lg">Conocimientos</div>
+                    <div class="absolute -bottom-5 left-1/2 -translate-x-1/2 glass-card px-4 py-2 rounded-xl text-xs font-bold text-encip-deep whitespace-nowrap shadow-lg">Valores</div>
+                    <div class="absolute top-1/2 -left-5 -translate-y-1/2 glass-card px-4 py-2 rounded-xl text-xs font-bold text-encip-deep whitespace-nowrap shadow-lg">Aptitudes</div>
+                    <div class="absolute top-1/2 -right-5 -translate-y-1/2 glass-card px-4 py-2 rounded-xl text-xs font-bold text-encip-deep whitespace-nowrap shadow-lg">Capacidades</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+            <span class="text-[10px] uppercase tracking-[0.3em] text-encip-deep/40 font-medium">Scroll</span>
+            <div class="w-6 h-10 rounded-full border-2 border-encip-deep/15 flex items-start justify-center p-1">
+                <div class="w-1.5 h-3 rounded-full bg-encip-gold animate-bounce"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MARQUEE BANNER ==================== -->
+    <div class="bg-encip-deep py-4 overflow-hidden">
+        <div class="marquee-container">
+            <div class="marquee-content">
+                <span class="text-white/30 text-sm font-medium tracking-wider mx-8">• Validez Oficial SEP</span>
+                <span class="text-encip-gold/60 text-sm font-medium tracking-wider mx-8">• +7,000 Egresados</span>
+                <span class="text-white/30 text-sm font-medium tracking-wider mx-8">• 20 Años de Trayectoria</span>
+                <span class="text-encip-gold/60 text-sm font-medium tracking-wider mx-8">• Modalidades Flexibles</span>
+                <span class="text-white/30 text-sm font-medium tracking-wider mx-8">• Becas Educativas</span>
+                <span class="text-encip-gold/60 text-sm font-medium tracking-wider mx-8">• Plataforma Digital</span>
+                <span class="text-white/30 text-sm font-medium tracking-wider mx-8">• Nicolás Romero, Edo. Méx.</span>
+                <span class="text-encip-gold/60 text-sm font-medium tracking-wider mx-8">• Inscripciones Abiertas</span>
+                <span class="text-white/30 text-sm font-medium tracking-wider mx-8">• Validez Oficial SEP</span>
+                <span class="text-encip-gold/60 text-sm font-medium tracking-wider mx-8">• +7,000 Egresados</span>
+                <span class="text-white/30 text-sm font-medium tracking-wider mx-8">• 20 Años de Trayectoria</span>
+                <span class="text-encip-gold/60 text-sm font-medium tracking-wider mx-8">• Modalidades Flexibles</span>
+                <span class="text-white/30 text-sm font-medium tracking-wider mx-8">• Becas Educativas</span>
+                <span class="text-encip-gold/60 text-sm font-medium tracking-wider mx-8">• Plataforma Digital</span>
+                <span class="text-white/30 text-sm font-medium tracking-wider mx-8">• Nicolás Romero, Edo. Méx.</span>
+                <span class="text-encip-gold/60 text-sm font-medium tracking-wider mx-8">• Inscripciones Abiertas</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MAPA DE NAVEGACIÓN ==================== -->
+    <section id="mapa" class="relative py-24 md:py-32 bg-white overflow-hidden noise">
+        <div class="absolute top-0 right-0 w-[700px] h-[700px] rounded-full bg-encip-pale/25 blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-encip-gold/4 blur-3xl translate-y-1/2 -translate-x-1/4"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <span class="inline-block px-5 py-2 rounded-full bg-encip-gold/10 text-encip-gold text-xs font-bold uppercase tracking-[0.2em] mb-5">Experiencia Interactiva</span>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-encip-deep mb-5">Mi Mapa de Navegación</h2>
+                <p class="text-encip-deep/40 max-w-xl mx-auto text-lg">Selecciona tu modalidad y descubre el camino diseñado para tu estilo de vida y aspiraciones.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="map-card glass-card rounded-2xl p-7 cursor-pointer active hover-lift" data-modalidad="linea" onclick="selectModalidad('linea')">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-encip-sky to-encip-royal flex items-center justify-center mb-5 shadow-xl">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-encip-deep mb-1 text-lg">Preparatoria en Línea</h3>
+                    <p class="text-xs text-encip-deep/40 font-medium">2 años · 3 asesorías/semana</p>
+                    <div class="mt-4 flex gap-2">
+                        <span class="px-2 py-1 rounded-md bg-encip-sky/10 text-[10px] text-encip-sky font-semibold">FLEXIBLE</span>
+                    </div>
+                </div>
+                <div class="map-card glass-card rounded-2xl p-7 cursor-pointer hover-lift" data-modalidad="ejecutiva" onclick="selectModalidad('ejecutiva')">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-encip-royal to-encip-deep flex items-center justify-center mb-5 shadow-xl">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                            <path d="M20 7h-9M20 11h-6M20 15h-3"/><circle cx="9" cy="12" r="6"/><path d="M9 12h.01"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-encip-deep mb-1 text-lg">Preparatoria Ejecutiva</h3>
+                    <p class="text-xs text-encip-deep/40 font-medium">1-1.5 años · 1 asesoría/semana</p>
+                    <div class="mt-4 flex gap-2">
+                        <span class="px-2 py-1 rounded-md bg-encip-royal/10 text-[10px] text-encip-royal font-semibold">PROFESIONAL</span>
+                    </div>
+                </div>
+                <div class="map-card glass-card rounded-2xl p-7 cursor-pointer hover-lift" data-modalidad="4meses" onclick="selectModalidad('4meses')">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-encip-gold to-encip-goldDark flex items-center justify-center mb-5 shadow-xl">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-encip-deep mb-1 text-lg">Preparatoria en 4 Meses</h3>
+                    <p class="text-xs text-encip-deep/40 font-medium">Intensivo · Plan acelerado</p>
+                    <div class="mt-4 flex gap-2">
+                        <span class="px-2 py-1 rounded-md bg-encip-gold/10 text-[10px] text-encip-goldDark font-semibold">RÁPIDO</span>
+                    </div>
+                </div>
+                <div class="map-card glass-card rounded-2xl p-7 cursor-pointer hover-lift" data-modalidad="licenciaturas" onclick="selectModalidad('licenciaturas')">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-encip-deep to-encip-navy flex items-center justify-center mb-5 shadow-xl">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 3 4 6 4s6-2 6-4v-5"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-encip-deep mb-1 text-lg">Licenciaturas</h3>
+                    <p class="text-xs text-encip-deep/40 font-medium">8 carreras · Presencial/Línea</p>
+                    <div class="mt-4 flex gap-2">
+                        <span class="px-2 py-1 rounded-md bg-encip-deep/10 text-[10px] text-encip-deep font-semibold">UNIVERSITARIO</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modalidadPanel" class="glass-dark rounded-3xl p-8 md:p-14 text-white relative overflow-hidden reveal">
+                <div class="absolute top-0 right-0 w-80 h-80 rounded-full bg-encip-gold/8 blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 w-60 h-60 rounded-full bg-encip-royal/15 blur-2xl"></div>
+                <div class="relative z-10 grid md:grid-cols-2 gap-14 items-center">
+                    <div>
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-1.5 h-10 rounded-full bg-encip-gold"></div>
+                            <span class="text-encip-gold text-sm font-bold uppercase tracking-[0.2em]" id="modalidadTag">Autonomía Total</span>
+                        </div>
+                        <h3 class="font-serif text-3xl md:text-4xl lg:text-5xl font-bold mb-5" id="modalidadTitle">Preparatoria en Línea</h3>
+                        <p class="text-white/60 leading-relaxed mb-10 text-lg" id="modalidadDesc">Esta modalidad te permite completar tus estudios de preparatoria desde cualquier lugar y a tu propio ritmo. Con materiales de alta calidad y apoyo continuo de expertos.</p>
+                        <div class="space-y-5 mb-10" id="modalidadSkills">
+                            <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-encip-gold/15 flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><span class="text-white/80">Autonomía de aprendizaje</span></div>
+                            <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-encip-gold/15 flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><span class="text-white/80">Gestión del tiempo</span></div>
+                            <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-encip-gold/15 flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><span class="text-white/80">Aprendizaje autodirigido</span></div>
+                        </div>
+                        <div class="flex flex-wrap gap-3" id="modalidadTags">
+                            <span class="px-4 py-2 rounded-full bg-white/8 text-xs text-white/60 border border-white/10 backdrop-blur-sm">Plataforma integral</span>
+                            <span class="px-4 py-2 rounded-full bg-white/8 text-xs text-white/60 border border-white/10 backdrop-blur-sm">Contenidos profesionales</span>
+                            <span class="px-4 py-2 rounded-full bg-white/8 text-xs text-white/60 border border-white/10 backdrop-blur-sm">Asistencia constante</span>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="neumorph-inset rounded-3xl p-10" id="modalidadVisual">
+                            <div class="flex items-center justify-center h-56">
+                                <div class="relative">
+                                    <div class="w-40 h-40 rounded-full border-2 border-encip-gold/25 flex items-center justify-center animate-pulse-glow">
+                                        <div class="w-28 h-28 rounded-full border border-encip-gold/15 flex items-center justify-center">
+                                            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5">
+                                                <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-encip-gold/20 flex items-center justify-center backdrop-blur-sm border border-encip-gold/20">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-6"><p class="text-white/30 text-sm font-medium">Perfil ideal: Estudiante autónomo con disciplina propia</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ==================== BRÚJULA OCDE ==================== -->
+    <section id="brujula" class="relative py-24 md:py-32 gradient-deep overflow-hidden noise">
+        <div class="absolute inset-0">
+            <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-encip-royal/15 blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-encip-gold/8 blur-3xl"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 reveal">
+                <span class="inline-block px-5 py-2 rounded-full bg-encip-gold/15 text-encip-gold text-xs font-bold uppercase tracking-[0.2em] mb-5">Marco Educativo</span>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-5">La Brújula de la OCDE</h2>
+                <p class="text-white/40 max-w-xl mx-auto text-lg">Los cuatro puntos cardinales que guían la formación integral de nuestros estudiantes.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="flex items-center justify-center reveal-scale">
+                    <div class="relative w-[380px] h-[380px] md:w-[480px] md:h-[480px]">
+                        <div class="absolute inset-0 rounded-full bg-encip-gold/5 blur-3xl animate-pulse-glow"></div>
+                        <svg class="compass-svg w-full h-full" viewBox="0 0 480 480" id="ocdeCompass">
+                            <defs>
+                                <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#C9A227"/><stop offset="50%" style="stop-color:#E8D179"/><stop offset="100%" style="stop-color:#C9A227"/>
+                                </linearGradient>
+                                <filter id="glow">
+                                    <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+                                    <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                </filter>
+                            </defs>
+                            <circle cx="240" cy="240" r="230" fill="none" stroke="url(#goldGradient)" stroke-width="1" opacity="0.25"/>
+                            <circle cx="240" cy="240" r="215" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="3 7"/>
+                            <circle cx="240" cy="240" r="200" fill="none" stroke="rgba(201,162,39,0.08)" stroke-width="1"/>
+
+                            <g class="compass-point" data-point="norte" onclick="selectPoint('norte')">
+                                <circle cx="240" cy="65" r="40" fill="rgba(201,162,39,0.12)" stroke="rgba(201,162,39,0.35)" stroke-width="1.5"/>
+                                <text x="240" y="58" text-anchor="middle" fill="#C9A227" font-size="18" font-weight="800" font-family="Space Grotesk">N</text>
+                                <text x="240" y="78" text-anchor="middle" fill="rgba(201,162,39,0.5)" font-size="9" font-family="Inter">NORTE</text>
+                            </g>
+                            <g class="compass-point" data-point="sur" onclick="selectPoint('sur')">
+                                <circle cx="240" cy="415" r="40" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+                                <text x="240" y="408" text-anchor="middle" fill="white" font-size="18" font-weight="800" font-family="Space Grotesk">S</text>
+                                <text x="240" y="428" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="9" font-family="Inter">SUR</text>
+                            </g>
+                            <g class="compass-point" data-point="oeste" onclick="selectPoint('oeste')">
+                                <circle cx="65" cy="240" r="40" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+                                <text x="65" y="233" text-anchor="middle" fill="white" font-size="18" font-weight="800" font-family="Space Grotesk">O</text>
+                                <text x="65" y="253" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="9" font-family="Inter">OESTE</text>
+                            </g>
+                            <g class="compass-point" data-point="este" onclick="selectPoint('este')">
+                                <circle cx="415" cy="240" r="40" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+                                <text x="415" y="233" text-anchor="middle" fill="white" font-size="18" font-weight="800" font-family="Space Grotesk">E</text>
+                                <text x="415" y="253" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="9" font-family="Inter">ESTE</text>
+                            </g>
+
+                            <line x1="240" y1="105" x2="240" y2="200" stroke="rgba(201,162,39,0.15)" stroke-width="1" stroke-dasharray="4 4"/>
+                            <line x1="240" y1="280" x2="240" y2="375" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4 4"/>
+                            <line x1="105" y1="240" x2="200" y2="240" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4 4"/>
+                            <line x1="280" y1="240" x2="375" y2="240" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4 4"/>
+
+                            <circle cx="240" cy="240" r="55" fill="none" stroke="url(#goldGradient)" stroke-width="1" opacity="0.2"/>
+                            <circle cx="240" cy="240" r="45" fill="rgba(6,26,61,0.25)" stroke="rgba(201,162,39,0.25)" stroke-width="1"/>
+                            <circle cx="240" cy="240" r="28" fill="rgba(201,162,39,0.08)" stroke="rgba(201,162,39,0.3)" stroke-width="1"/>
+                            <circle cx="240" cy="240" r="10" fill="#C9A227" filter="url(#glow)"/>
+
+                            <g class="compass-needle" id="ocdeNeedle">
+                                <path d="M240 240 L240 105 L252 240 Z" fill="#C9A227" opacity="0.75"/>
+                                <path d="M240 240 L240 375 L228 240 Z" fill="white" opacity="0.25"/>
+                            </g>
+                        </svg>
+                        <div id="activePointIndicator" class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-3 glass px-5 py-2.5 rounded-xl text-sm font-bold text-encip-gold opacity-0 transition-all duration-500 shadow-xl">Conocimientos</div>
+                    </div>
+                </div>
+
+                <div class="reveal-right">
+                    <div id="pointPanel" class="glass rounded-2xl p-10 border border-white/10">
+                        <div class="flex items-center gap-5 mb-8">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-encip-gold/25 to-encip-gold/5 flex items-center justify-center border border-encip-gold/25">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5" id="pointIcon">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-encip-gold text-xs font-bold uppercase tracking-[0.2em]">Norte</span>
+                                <h3 class="text-3xl font-bold text-white font-serif" id="pointTitle">Conocimientos</h3>
+                            </div>
+                        </div>
+                        <p class="text-white/50 leading-relaxed text-xl mb-8" id="pointDesc">"No es memorizar. Es aprender qué aprender." Desarrollamos la capacidad de adquirir, evaluar y aplicar conocimientos de manera crítica y creativa.</p>
+                        <div class="space-y-4" id="pointDetails">
+                            <div class="flex items-start gap-4"><div class="w-7 h-7 rounded-full bg-encip-gold/15 flex items-center justify-center mt-0.5 flex-shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><span class="text-white/40">Pensamiento crítico y analítico</span></div>
+                            <div class="flex items-start gap-4"><div class="w-7 h-7 rounded-full bg-encip-gold/15 flex items-center justify-center mt-0.5 flex-shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><span class="text-white/40">Aprendizaje continuo y adaptativo</span></div>
+                            <div class="flex items-start gap-4"><div class="w-7 h-7 rounded-full bg-encip-gold/15 flex items-center justify-center mt-0.5 flex-shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><span class="text-white/40">Gestión de información digital</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ==================== CO-AGENCIA ==================== -->
+    <section id="coagencia" class="relative py-24 md:py-32 bg-encip-cream overflow-hidden noise">
+        <div class="absolute top-0 left-0 w-full h-full">
+            <div class="absolute top-20 right-20 w-80 h-80 rounded-full bg-encip-gold/4 blur-3xl"></div>
+            <div class="absolute bottom-20 left-20 w-[450px] h-[450px] rounded-full bg-encip-royal/4 blur-3xl"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 reveal">
+                <span class="inline-block px-5 py-2 rounded-full bg-encip-royal/10 text-encip-royal text-xs font-bold uppercase tracking-[0.2em] mb-5">Ecosistema Colaborativo</span>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-encip-deep mb-5">Co-Agencia</h2>
+                <p class="text-encip-deep/40 max-w-xl mx-auto text-lg">"El aprendizaje ocurre mejor cuando el estudiante no navega solo."</p>
+            </div>
+
+            <div class="relative mb-20 reveal">
+                <svg class="w-full h-72 md:h-96" viewBox="0 0 900 350" id="coAgencySvg">
+                    <defs>
+                        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#C9A227;stop-opacity:0.25"/>
+                            <stop offset="50%" style="stop-color:#C9A227;stop-opacity:0.9"/>
+                            <stop offset="100%" style="stop-color:#C9A227;stop-opacity:0.25"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M220 175 Q450 60 680 175" stroke="url(#lineGrad)" stroke-width="2.5" fill="none" stroke-dasharray="10 5" class="connection-line" opacity="0.7"/>
+                    <path d="M220 175 Q450 290 680 175" stroke="url(#lineGrad)" stroke-width="2.5" fill="none" stroke-dasharray="10 5" class="connection-line" opacity="0.7"/>
+                    <path d="M220 175 Q335 110 450 175" stroke="rgba(6,26,61,0.08)" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+                    <path d="M450 175 Q565 110 680 175" stroke="rgba(6,26,61,0.08)" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+                    <path d="M220 175 Q335 240 450 175" stroke="rgba(6,26,61,0.08)" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+                    <path d="M450 175 Q565 240 680 175" stroke="rgba(6,26,61,0.08)" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+
+                    <g class="cursor-pointer" onmouseenter="highlightNode('estudiante')" onmouseleave="resetNode('estudiante')">
+                        <circle cx="220" cy="175" r="60" fill="rgba(6,26,61,0.04)" stroke="rgba(6,26,61,0.15)" stroke-width="1" class="node-bg" id="node-estudiante"/>
+                        <circle cx="220" cy="175" r="42" fill="white" stroke="#C9A227" stroke-width="2.5" class="node-core shadow-xl"/>
+                        <text x="220" y="180" text-anchor="middle" fill="#061A3D" font-size="13" font-weight="700" font-family="Inter">Estudiante</text>
+                    </g>
+                    <g class="cursor-pointer" onmouseenter="highlightNode('docente')" onmouseleave="resetNode('docente')">
+                        <circle cx="450" cy="175" r="60" fill="rgba(6,26,61,0.04)" stroke="rgba(6,26,61,0.15)" stroke-width="1" class="node-bg" id="node-docente"/>
+                        <circle cx="450" cy="175" r="42" fill="white" stroke="#1A5FAD" stroke-width="2.5" class="node-core shadow-xl"/>
+                        <text x="450" y="180" text-anchor="middle" fill="#061A3D" font-size="13" font-weight="700" font-family="Inter">Docentes</text>
+                    </g>
+                    <g class="cursor-pointer" onmouseenter="highlightNode('familia')" onmouseleave="resetNode('familia')">
+                        <circle cx="680" cy="175" r="60" fill="rgba(6,26,61,0.04)" stroke="rgba(6,26,61,0.15)" stroke-width="1" class="node-bg" id="node-familia"/>
+                        <circle cx="680" cy="175" r="42" fill="white" stroke="#C9A227" stroke-width="2.5" class="node-core shadow-xl"/>
+                        <text x="680" y="180" text-anchor="middle" fill="#061A3D" font-size="13" font-weight="700" font-family="Inter">Familia</text>
+                    </g>
+                </svg>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-card rounded-2xl p-10 text-center reveal-left hover-lift" id="card-estudiante">
+                    <div class="w-18 h-18 rounded-2xl bg-gradient-to-br from-encip-deep to-encip-royal flex items-center justify-center mx-auto mb-7 shadow-2xl">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-encip-deep mb-4">El Estudiante</h3>
+                    <p class="text-encip-deep/45 text-sm leading-relaxed mb-6">Protagonista de su propio aprendizaje. Desarrolla autonomía, toma decisiones informadas y construye su camino con propósito.</p>
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <span class="px-3 py-1.5 rounded-full bg-encip-deep/5 text-xs text-encip-deep/50 font-medium">Autonomía</span>
+                        <span class="px-3 py-1.5 rounded-full bg-encip-deep/5 text-xs text-encip-deep/50 font-medium">Propósito</span>
+                        <span class="px-3 py-1.5 rounded-full bg-encip-deep/5 text-xs text-encip-deep/50 font-medium">Visión</span>
+                    </div>
+                </div>
+                <div class="glass-card rounded-2xl p-10 text-center reveal hover-lift" id="card-docente">
+                    <div class="w-18 h-18 rounded-2xl bg-gradient-to-br from-encip-royal to-encip-sky flex items-center justify-center mx-auto mb-7 shadow-2xl">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-encip-deep mb-4">Los Docentes</h3>
+                    <p class="text-encip-deep/45 text-sm leading-relaxed mb-6">Guías expertos que acompañan, motivan y desafían. Facilitan el descubrimiento y modelan el pensamiento crítico.</p>
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <span class="px-3 py-1.5 rounded-full bg-encip-royal/5 text-xs text-encip-royal/50 font-medium">Mentoría</span>
+                        <span class="px-3 py-1.5 rounded-full bg-encip-royal/5 text-xs text-encip-royal/50 font-medium">Expertos</span>
+                        <span class="px-3 py-1.5 rounded-full bg-encip-royal/5 text-xs text-encip-royal/50 font-medium">Inspiración</span>
+                    </div>
+                </div>
+                <div class="glass-card rounded-2xl p-10 text-center reveal-right hover-lift" id="card-familia">
+                    <div class="w-18 h-18 rounded-2xl bg-gradient-to-br from-encip-gold to-encip-goldDark flex items-center justify-center mx-auto mb-7 shadow-2xl">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-encip-deep mb-4">La Familia</h3>
+                    <p class="text-encip-deep/45 text-sm leading-relaxed mb-6">Pilar fundamental del ecosistema. Apoya, motiva y fortalece el entorno emocional para el éxito académico.</p>
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <span class="px-3 py-1.5 rounded-full bg-encip-gold/10 text-xs text-encip-goldDark/70 font-medium">Apoyo</span>
+                        <span class="px-3 py-1.5 rounded-full bg-encip-gold/10 text-xs text-encip-goldDark/70 font-medium">Motivación</span>
+                        <span class="px-3 py-1.5 rounded-full bg-encip-gold/10 text-xs text-encip-goldDark/70 font-medium">Comunidad</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ==================== TIMELINE ==================== -->
+    <section id="timeline" class="relative py-24 md:py-32 bg-white overflow-hidden noise">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-encip-pale/15 blur-3xl -translate-y-1/2"></div>
+        <div class="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-encip-gold/4 blur-3xl translate-y-1/2 translate-x-1/4"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6">
+            <div class="text-center mb-24 reveal">
+                <span class="inline-block px-5 py-2 rounded-full bg-encip-deep/8 text-encip-deep text-xs font-bold uppercase tracking-[0.2em] mb-5">Nuestra Historia</span>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-encip-deep mb-5">Más de 20 Años de Excelencia</h2>
+                <p class="text-encip-deep/40 max-w-xl mx-auto text-lg">Una trayectoria de crecimiento, innovación y compromiso con la educación de calidad.</p>
+            </div>
+
+            <div class="relative">
+                <div class="timeline-line"></div>
+
+                <!-- 2003 -->
+                <div class="relative mb-20 md:mb-28">
+                    <div class="timeline-dot" style="top: 0;"></div>
+                    <div class="grid md:grid-cols-2 gap-10 items-center">
+                        <div class="md:text-right reveal-left md:pr-16">
+                            <span class="text-encip-gold font-bold text-sm uppercase tracking-[0.2em]">2003</span>
+                            <h3 class="font-serif text-3xl font-bold text-encip-deep mt-3 mb-4">Fundación ENCIP</h3>
+                            <p class="text-encip-deep/45 text-sm leading-relaxed">Nace el Instituto Universitario ENCIP con la visión de democratizar el acceso a la educación superior de calidad en México.</p>
+                        </div>
+                        <div class="reveal-right md:pl-16">
+                            <div class="glass-card rounded-2xl p-7 inline-block hover-lift">
+                                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-encip-deep to-encip-royal flex items-center justify-center shadow-lg">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2010 -->
+                <div class="relative mb-20 md:mb-28">
+                    <div class="timeline-dot" style="top: 0;"></div>
+                    <div class="grid md:grid-cols-2 gap-10 items-center">
+                        <div class="md:order-2 reveal-right md:pl-16">
+                            <span class="text-encip-gold font-bold text-sm uppercase tracking-[0.2em]">2010</span>
+                            <h3 class="font-serif text-3xl font-bold text-encip-deep mt-3 mb-4">Expansión de Modalidades</h3>
+                            <p class="text-encip-deep/45 text-sm leading-relaxed">Lanzamos la Preparatoria Ejecutiva y la modalidad en línea, adaptándonos a las necesidades de adultos y profesionales en activo.</p>
+                        </div>
+                        <div class="md:order-1 reveal-left md:pr-16 md:text-right">
+                            <div class="glass-card rounded-2xl p-7 inline-block hover-lift">
+                                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-encip-royal to-encip-sky flex items-center justify-center shadow-lg">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                                        <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2015 -->
+                <div class="relative mb-20 md:mb-28">
+                    <div class="timeline-dot" style="top: 0;"></div>
+                    <div class="grid md:grid-cols-2 gap-10 items-center">
+                        <div class="md:text-right reveal-left md:pr-16">
+                            <span class="text-encip-gold font-bold text-sm uppercase tracking-[0.2em]">2015</span>
+                            <h3 class="font-serif text-3xl font-bold text-encip-deep mt-3 mb-4">Licenciaturas Ejecutivas</h3>
+                            <p class="text-encip-deep/45 text-sm leading-relaxed">Incorporamos 8 licenciaturas con horarios flexibles: Enfermería, Contaduría, Derecho, Pedagogía, Psicología, Administración, Ingeniería Industrial y Sistemas.</p>
+                        </div>
+                        <div class="reveal-right md:pl-16">
+                            <div class="glass-card rounded-2xl p-7 inline-block hover-lift">
+                                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-encip-gold to-encip-goldDark flex items-center justify-center shadow-lg">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 3 4 6 4s6-2 6-4v-5"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2020 -->
+                <div class="relative mb-20 md:mb-28">
+                    <div class="timeline-dot" style="top: 0;"></div>
+                    <div class="grid md:grid-cols-2 gap-10 items-center">
+                        <div class="md:order-2 reveal-right md:pl-16">
+                            <span class="text-encip-gold font-bold text-sm uppercase tracking-[0.2em]">2020</span>
+                            <h3 class="font-serif text-3xl font-bold text-encip-deep mt-3 mb-4">Innovación Digital</h3>
+                            <p class="text-encip-deep/45 text-sm leading-relaxed">Transformación digital completa con plataforma educativa integral, contenidos interactivos y modelo híbrido presencial-en línea.</p>
+                        </div>
+                        <div class="md:order-1 reveal-left md:pr-16 md:text-right">
+                            <div class="glass-card rounded-2xl p-7 inline-block hover-lift">
+                                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-encip-sky to-encip-light flex items-center justify-center shadow-lg">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2024 -->
+                <div class="relative">
+                    <div class="timeline-dot" style="top: 0;"></div>
+                    <div class="grid md:grid-cols-2 gap-10 items-center">
+                        <div class="md:text-right reveal-left md:pr-16">
+                            <span class="text-encip-gold font-bold text-sm uppercase tracking-[0.2em]">2024</span>
+                            <h3 class="font-serif text-3xl font-bold text-encip-deep mt-3 mb-4">+7,000 Egresados</h3>
+                            <p class="text-encip-deep/45 text-sm leading-relaxed">Más de 7,000 profesionales formados. Reconocimiento SEP a nivel federal. Expansión continua con 30+ servicios educativos.</p>
+                        </div>
+                        <div class="reveal-right md:pl-16">
+                            <div class="glass-card rounded-2xl p-7 inline-block hover-lift">
+                                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-encip-deep to-encip-navy flex items-center justify-center shadow-lg">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                                        <circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ==================== FOOTER PREMIUM ==================== -->
+    <footer id="contacto" class="relative py-24 md:py-32 gradient-deep overflow-hidden noise">
+        <div class="absolute inset-0">
+            <div class="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-encip-royal/8 blur-3xl"></div>
+            <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-encip-gold/8 blur-3xl"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6">
+            <!-- CTA Section -->
+            <div class="text-center mb-24 reveal">
+                <h2 class="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight">Tu futuro empieza<br><span class="text-gradient-gold">hoy mismo</span></h2>
+                <p class="text-white/40 max-w-lg mx-auto mb-12 text-lg leading-relaxed">No esperes más para tomar el control de tu educación y tu vida. En ENCIP te acompañamos en cada paso del camino.</p>
+                <div class="flex flex-col sm:flex-row gap-5 justify-center">
+                    <a href="https://wa.me/525638728525" target="_blank" class="btn-gold px-10 py-5 rounded-full text-sm font-bold shadow-2xl hover:shadow-3xl inline-flex items-center justify-center gap-3 group">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        <span>WhatsApp 56 3872 8525</span>
+                    </a>
+                    <a href="tel:5522685235" class="glass px-10 py-5 rounded-full text-sm font-semibold text-white inline-flex items-center justify-center gap-3 hover:bg-white/10 transition-all">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <span>55 2268 5235</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-14 mb-20">
+                <div class="reveal-left">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-encip-gold/25 to-encip-gold/5 flex items-center justify-center border border-encip-gold/20">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z"/></svg>
+                        </div>
+                        <span class="text-white font-bold text-xl font-display">ENCIP</span>
+                    </div>
+                    <p class="text-white/30 text-sm leading-relaxed mb-6">Instituto Universitario con validez oficial SEP. Formando personas capaces de dirigir su vida con propósito desde 2003.</p>
+                    <div class="flex gap-3">
+                        <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-encip-gold/20 transition-colors" onclick="alert('Facebook próximamente'); return false;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-encip-gold/20 transition-colors" onclick="alert('Instagram próximamente'); return false;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-encip-gold/20 transition-colors" onclick="alert('TikTok próximamente'); return false;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="reveal">
+                    <h4 class="text-white font-semibold mb-8 text-sm uppercase tracking-[0.2em]">Modalidades</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#mapa" class="text-white/30 text-sm hover:text-encip-gold transition-colors flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-encip-gold/40"></span>Preparatoria en Línea</a></li>
+                        <li><a href="#mapa" class="text-white/30 text-sm hover:text-encip-gold transition-colors flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-encip-gold/40"></span>Preparatoria Ejecutiva</a></li>
+                        <li><a href="#mapa" class="text-white/30 text-sm hover:text-encip-gold transition-colors flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-encip-gold/40"></span>Preparatoria en 4 Meses</a></li>
+                        <li><a href="#mapa" class="text-white/30 text-sm hover:text-encip-gold transition-colors flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-encip-gold/40"></span>Examen Único</a></li>
+                        <li><a href="#mapa" class="text-white/30 text-sm hover:text-encip-gold transition-colors flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-encip-gold/40"></span>Licenciaturas</a></li>
+                        <li><a href="#mapa" class="text-white/30 text-sm hover:text-encip-gold transition-colors flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-encip-gold/40"></span>Secundaria Abierta</a></li>
+                    </ul>
+                </div>
+
+                <div class="reveal-right">
+                    <h4 class="text-white font-semibold mb-8 text-sm uppercase tracking-[0.2em]">Contacto</h4>
+                    <ul class="space-y-5">
+                        <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-encip-gold/10 flex items-center justify-center flex-shrink-0">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            </div>
+                            <div>
+                                <span class="text-white/50 text-xs uppercase tracking-wider block mb-1">Ubicación</span>
+                                <span class="text-white/70 text-sm">Nicolás Romero, Estado de México</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-encip-gold/10 flex items-center justify-center flex-shrink-0">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            </div>
+                            <div>
+                                <span class="text-white/50 text-xs uppercase tracking-wider block mb-1">Email</span>
+                                <a href="mailto:mgalvez.encip@gmail.com" class="text-white/70 text-sm hover:text-encip-gold transition-colors">mgalvez.encip@gmail.com</a>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-encip-gold/10 flex items-center justify-center flex-shrink-0">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            </div>
+                            <div>
+                                <span class="text-white/50 text-xs uppercase tracking-wider block mb-1">Teléfono</span>
+                                <a href="tel:5522685235" class="text-white/70 text-sm hover:text-encip-gold transition-colors">55 2268 5235</a>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-encip-gold/10 flex items-center justify-center flex-shrink-0">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                            </div>
+                            <div>
+                                <span class="text-white/50 text-xs uppercase tracking-wider block mb-1">WhatsApp</span>
+                                <a href="https://wa.me/525638728525" target="_blank" class="text-white/70 text-sm hover:text-encip-gold transition-colors">56 3872 8525</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/8 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-white/20 text-xs tracking-wider"> 2024 Instituto Universitario ENCIP. Todos los derechos reservados.</p>
+                <div class="flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-encip-gold animate-pulse"></span>
+                    <p class="text-white/20 text-xs tracking-wider">Validez oficial SEP a nivel federal</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+    // === LIVE CLOCK ===
+    function updateClock() {
+        const now = new Date();
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+
+        document.getElementById('liveDate').textContent = now.toLocaleDateString('es-MX', dateOptions);
+        document.getElementById('liveTime').innerHTML = now.toLocaleTimeString('es-MX', timeOptions).replace(/:/g, '<span class="colon">:</span>');
     }
-    const root = ReactDOM.createRoot(rootElement);
-    root.render(
-      React.createElement(React.StrictMode, null, React.createElement(App, null))
-    );
-    // --- End of index.tsx ---
-  </script>
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // === LOADING SCREEN ===
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('loadingScreen').classList.add('hidden');
+        }, 2000);
+    });
+
+    // === PARTICLE SYSTEM ===
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2.5 + 0.5;
+            this.speedX = (Math.random() - 0.5) * 0.4;
+            this.speedY = (Math.random() - 0.5) * 0.4;
+            this.opacity = Math.random() * 0.4 + 0.1;
+            this.color = Math.random() > 0.5 ? '201, 162, 39' : '6, 26, 61';
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${this.color}, ${this.opacity})`;
+            ctx.fill();
+        }
+    }
+
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+    }
+    initParticles();
+
+    function connectParticles() {
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < 180) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(201, 162, 39, ${0.08 * (1 - distance / 180)})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        connectParticles();
+        requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // === CURSOR GLOW ===
+    const cursorGlow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', (e) => {
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+    });
+
+    // === SCROLL PROGRESS ===
+    const scrollProgress = document.getElementById('scrollProgress');
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        scrollProgress.style.width = (scrollTop / docHeight * 100) + '%';
+    });
+
+    // === NAVIGATION SCROLL EFFECT ===
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 120) {
+            nav.style.background = 'rgba(255,255,255,0.9)';
+            nav.style.backdropFilter = 'blur(24px)';
+            nav.style.boxShadow = '0 4px 30px rgba(6,26,61,0.08)';
+        } else {
+            nav.style.background = 'transparent';
+            nav.style.backdropFilter = 'none';
+            nav.style.boxShadow = 'none';
+        }
+    });
+
+    // === MOBILE MENU ===
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    // === GSAP SCROLL ANIMATIONS ===
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray('.reveal').forEach(el => {
+        gsap.to(el, {
+            opacity: 1, y: 0, duration: 1.2,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+        });
+    });
+
+    gsap.utils.toArray('.reveal-left').forEach(el => {
+        gsap.to(el, {
+            opacity: 1, x: 0, duration: 1.2,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+        });
+    });
+
+    gsap.utils.toArray('.reveal-right').forEach(el => {
+        gsap.to(el, {
+            opacity: 1, x: 0, duration: 1.2,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+        });
+    });
+
+    gsap.utils.toArray('.reveal-scale').forEach(el => {
+        gsap.to(el, {
+            opacity: 1, scale: 1, duration: 1.4,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+        });
+    });
+
+    // Counter animation
+    const counters = document.querySelectorAll('.counter');
+    counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-target'));
+        gsap.to(counter, {
+            innerText: target, duration: 2.5, snap: { innerText: 1 },
+            ease: 'power2.out',
+            scrollTrigger: { trigger: counter, start: 'top 92%' }
+        });
+    });
+
+    // === HERO COMPASS ===
+    const compassNeedle = document.getElementById('compassNeedle');
+    const outerRing = document.getElementById('outerRing');
+    const cardinalRing = document.getElementById('cardinalRing');
+    let needleAngle = 0;
+    function animateCompass() {
+        needleAngle += 0.25;
+        if (compassNeedle) compassNeedle.style.transform = `rotate(${needleAngle}deg)`;
+        if (outerRing) outerRing.style.transform = `rotate(${-needleAngle * 0.15}deg)`;
+        if (cardinalRing) cardinalRing.style.transform = `rotate(${needleAngle * 0.08}deg)`;
+        requestAnimationFrame(animateCompass);
+    }
+    animateCompass();
+
+    // === MODALIDAD DATA ===
+    const modalidades = {
+        linea: {
+            tag: 'Autonomía Total', title: 'Preparatoria en Línea',
+            desc: 'Esta modalidad te permite completar tus estudios de preparatoria desde cualquier lugar y a tu propio ritmo. Con materiales de alta calidad y apoyo continuo de expertos, ofrecemos una experiencia educativa flexible y accesible.',
+            skills: ['Autonomía de aprendizaje', 'Gestión del tiempo', 'Aprendizaje autodirigido'],
+            tags: ['Plataforma integral', 'Contenidos profesionales', 'Asistencia constante'],
+            icon: '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+            perfil: 'Estudiante autónomo con disciplina propia'
+        },
+        ejecutiva: {
+            tag: 'Equilibrio Perfecto', title: 'Preparatoria Ejecutiva',
+            desc: 'Modalidad diseñada para adultos que buscan completar su educación preparatoria sin sacrificar su tiempo de trabajo. Programa flexible y de alta calidad, adaptado a tus necesidades profesionales.',
+            skills: ['Equilibrio trabajo-estudio', 'Eficiencia', 'Productividad'],
+            tags: ['Compatible con trabajo', 'Título reconocido', 'Acceso multi-dispositivo'],
+            icon: '<path d="M20 7h-9M20 11h-6M20 15h-3"/><circle cx="9" cy="12" r="6"/><path d="M9 12h.01"/>',
+            perfil: 'Profesional en activo con horario laboral'
+        },
+        '4meses': {
+            tag: 'Intensidad Máxima', title: 'Preparatoria en 4 Meses',
+            desc: 'Programa intensivo que te permite completar todos los requisitos de preparatoria en un tiempo récord. Plan de estudios eficiente y recursos especializados para tu éxito académico.',
+            skills: ['Intensidad', 'Disciplina', 'Enfoque acelerado'],
+            tags: ['4 meses certificación', 'Plan maximizado', 'Asesoría individualizada'],
+            icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+            perfil: 'Persona determinada con metas claras'
+        },
+        licenciaturas: {
+            tag: 'Liderazgo Profesional', title: 'Licenciaturas Ejecutivas',
+            desc: 'Variedad de licenciaturas con horario accesible para que puedas trabajar y estudiar. Modalidad presencial o en línea, además de beca educativa durante toda tu estancia.',
+            skills: ['Liderazgo', 'Co-agencia', 'Comunidad profesional'],
+            tags: ['8 carreras', 'Beca educativa', 'Presencial/Línea'],
+            icon: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 3 4 6 4s6-2 6-4v-5"/>',
+            perfil: 'Líder en formación con visión de futuro'
+        }
+    };
+
+    function selectModalidad(key) {
+        const data = modalidades[key];
+        if (!data) return;
+        document.querySelectorAll('.map-card').forEach(c => c.classList.remove('active'));
+        document.querySelector(`[data-modalidad="${key}"]`).classList.add('active');
+        const panel = document.getElementById('modalidadPanel');
+        gsap.to(panel, { opacity: 0.5, y: 10, duration: 0.2, onComplete: () => {
+            document.getElementById('modalidadTag').textContent = data.tag;
+            document.getElementById('modalidadTitle').textContent = data.title;
+            document.getElementById('modalidadDesc').textContent = data.desc;
+            document.getElementById('modalidadSkills').innerHTML = data.skills.map(s => 
+                `<div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-encip-gold/15 flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><span class="text-white/80">${s}</span></div>`
+            ).join('');
+            document.getElementById('modalidadTags').innerHTML = data.tags.map(t => 
+                `<span class="px-4 py-2 rounded-full bg-white/8 text-xs text-white/60 border border-white/10 backdrop-blur-sm">${t}</span>`
+            ).join('');
+            document.getElementById('modalidadVisual').innerHTML = `
+                <div class="flex items-center justify-center h-56">
+                    <div class="relative">
+                        <div class="w-40 h-40 rounded-full border-2 border-encip-gold/25 flex items-center justify-center animate-pulse-glow">
+                            <div class="w-28 h-28 rounded-full border border-encip-gold/15 flex items-center justify-center">
+                                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5">${data.icon}</svg>
+                            </div>
+                        </div>
+                        <div class="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-encip-gold/20 flex items-center justify-center backdrop-blur-sm border border-encip-gold/20">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-6"><p class="text-white/30 text-sm font-medium">Perfil ideal: ${data.perfil}</p></div>
+            `;
+            gsap.to(panel, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+        }});
+    }
+
+    // === OCDE COMPASS ===
+    const pointsData = {
+        norte: {
+            label: 'Norte', title: 'Conocimientos',
+            desc: '"No es memorizar. Es aprender qué aprender." Desarrollamos la capacidad de adquirir, evaluar y aplicar conocimientos de manera crítica y creativa.',
+            icon: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
+            details: ['Pensamiento crítico y analítico', 'Aprendizaje continuo y adaptativo', 'Gestión de información digital']
+        },
+        sur: {
+            label: 'Sur', title: 'Valores',
+            desc: '"Actuar responsablemente para generar cambios positivos." Formamos ciudadanos íntegros con compromiso social y ético profesional.',
+            icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+            details: ['Responsabilidad social', 'Ética profesional', 'Compromiso comunitario']
+        },
+        este: {
+            label: 'Este', title: 'Capacidades',
+            desc: '"Herramientas para adaptarse a nuevos escenarios." Desarrollamos habilidades transferibles que permiten enfrentar cualquier desafío del futuro.',
+            icon: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+            details: ['Adaptabilidad al cambio', 'Resolución de problemas complejos', 'Innovación y creatividad']
+        },
+        oeste: {
+            label: 'Oeste', title: 'Aptitudes',
+            desc: '"Resolver problemas y navegar contextos inciertos." Fortalecemos la capacidad de tomar decisiones informadas en ambientes de incertidumbre.',
+            icon: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+            details: ['Toma de decisiones bajo presión', 'Navegación de incertidumbre', 'Pensamiento estratégico']
+        }
+    };
+
+    function selectPoint(point) {
+        const data = pointsData[point];
+        if (!data) return;
+        document.querySelectorAll('.compass-point').forEach(p => p.classList.remove('active'));
+        document.querySelector(`[data-point="${point}"]`).classList.add('active');
+        const angles = { norte: 0, este: 90, sur: 180, oeste: 270 };
+        const needle = document.getElementById('ocdeNeedle');
+        if (needle) needle.style.transform = `rotate(${angles[point]}deg)`;
+        const indicator = document.getElementById('activePointIndicator');
+        if (indicator) {
+            indicator.textContent = data.title;
+            indicator.style.opacity = '1';
+            setTimeout(() => { indicator.style.opacity = '0'; }, 2500);
+        }
+        const panel = document.getElementById('pointPanel');
+        gsap.to(panel, { opacity: 0.5, x: 20, duration: 0.2, onComplete: () => {
+            document.getElementById('pointIcon').innerHTML = data.icon;
+            document.querySelector('#pointPanel span').textContent = data.label;
+            document.getElementById('pointTitle').textContent = data.title;
+            document.getElementById('pointDesc').textContent = data.desc;
+            document.getElementById('pointDetails').innerHTML = data.details.map(d => 
+                `<div class="flex items-start gap-4"><div class="w-7 h-7 rounded-full bg-encip-gold/15 flex items-center justify-center mt-0.5 flex-shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><span class="text-white/40">${d}</span></div>`
+            ).join('');
+            gsap.to(panel, { opacity: 1, x: 0, duration: 0.4, ease: 'power2.out' });
+        }});
+    }
+
+    // === CO-AGENCY NODES ===
+    function highlightNode(node) {
+        document.getElementById(`node-${node}`).setAttribute('stroke', '#C9A227');
+        document.getElementById(`node-${node}`).setAttribute('stroke-width', '2');
+        document.getElementById(`card-${node}`).style.borderColor = 'rgba(201, 162, 39, 0.4)';
+        document.getElementById(`card-${node}`).style.transform = 'translateY(-10px) scale(1.02)';
+    }
+    function resetNode(node) {
+        document.getElementById(`node-${node}`).setAttribute('stroke', 'rgba(6,26,61,0.15)');
+        document.getElementById(`node-${node}`).setAttribute('stroke-width', '1');
+        document.getElementById(`card-${node}`).style.borderColor = '';
+        document.getElementById(`card-${node}`).style.transform = '';
+    }
+
+    // === SMOOTH SCROLL ===
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                mobileMenu.classList.add('hidden');
+            }
+        });
+    });
+    </script>
 </body>
 </html>
